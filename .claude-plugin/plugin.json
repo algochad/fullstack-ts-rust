@@ -1,12 +1,28 @@
 {
-  "name": "agents-kit",
-  "version": "1.6.1",
-  "description": "Tiered subagents (Opus architect, Sonnet test-writer and developer, Haiku reviewer) with a /agents-kit:tdd pipeline and debugging and security-audit skills, aimed at TypeScript web/backend, NestJS, Better Auth, Expo, Tauri and Rust.",
+  "name": "fullstack-ts-rust",
+  "version": "2.0.0",
+  "description": "Fullstack agent kit for TypeScript web and backend (React, NestJS, Better Auth), React Native with Expo, Tauri desktop and mobile, and Rust. Tiered Opus/Sonnet/Haiku subagents, a TDD pipeline, and debugging and security-audit skills.",
   "author": {
     "name": "algochad"
   },
   "license": "MIT",
   "dependencies": [
     "ponytail"
+  ],
+  "displayName": "Fullstack TypeScript + Rust",
+  "repository": "https://github.com/algochad/fullstack-ts-rust",
+  "keywords": [
+    "typescript",
+    "rust",
+    "fullstack",
+    "react",
+    "nestjs",
+    "better-auth",
+    "expo",
+    "react-native",
+    "tauri",
+    "tdd",
+    "security",
+    "subagents"
   ]
 }
