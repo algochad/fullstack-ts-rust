@@ -1,0 +1,7 @@
+{
+  "name": "agents-kit",
+  "version": "1.1.0",
+  "description": "Subagents tiered by model: Opus architect, Sonnet test-writer and developer (TDD, headless smoke tests), Haiku reviewer, Explore and general-purpose. Includes a /agents-kit:tdd pipeline command.",
+  "author": { "name": "algochad" },
+  "license": "MIT"
+}

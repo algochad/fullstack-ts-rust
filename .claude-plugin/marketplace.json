@@ -1,0 +1,7 @@
+{
+  "name": "agents-kit",
+  "owner": { "name": "algochad" },
+  "plugins": [
+    { "name": "agents-kit", "source": "./", "description": "Tiered subagents (Opus, Sonnet, Haiku) with a TDD pipeline." }
+  ]
+}
