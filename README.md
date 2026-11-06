@@ -11,7 +11,7 @@ A Claude Code plugin of subagents tiered by model, built around a TDD pipeline.
 | `Explore` (override) | haiku | high | Read-only codebase search |
 | `general-purpose` (override) | haiku | max | Catch-all research and multi-step tasks |
 
-Skills: `debugging` (reproduce, find the root cause, fix once, regression test) and `security-audit` (trust-boundary checklist, read-only report). They load automatically when relevant, or call `/agents-kit:debugging` and `/agents-kit:security-audit`.
+Skills: `debugging` (reproduce, find the root cause, fix once, regression test) and `security-audit` (diff-focused hunt, per-finding verification, false-positive exclusions, variant search, confidence-scored report). They load automatically when relevant, or call `/agents-kit:debugging` and `/agents-kit:security-audit`.
 
 Command: `/agents-kit:tdd <feature>` runs plan, red, green, review with a gate between phases.
 
@@ -31,3 +31,7 @@ Or try locally: `claude --plugin-dir /path/to/claude-agents-kit`
 - The override hook needs `node` on PATH; without it the hook fails harmlessly and the two built-ins stay at their defaults. It honors `CLAUDE_CONFIG_DIR`.
 - The smoke test needs Playwright (or the project's e2e setup) installed. Without it the developer reports what it couldn't verify.
 - Design ideas: separate contexts per TDD phase, phase gates, fresh-context review, few agents.
+
+## Credits
+
+Skills are rewritten (not copied) from ideas in: [anthropics/claude-code-security-review](https://github.com/anthropics/claude-code-security-review) (MIT), [trailofbits/skills](https://github.com/trailofbits/skills) (CC-BY-SA-4.0; fp-check and variant-analysis), and [obra/superpowers](https://github.com/obra/superpowers) (MIT; systematic-debugging).
