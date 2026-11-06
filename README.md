@@ -1,6 +1,6 @@
-# fullstack-ts-rust
+# agents-kit
 
-A Claude Code plugin for **fullstack TypeScript and Rust** work: web and backend, mobile, and desktop. It gives you tiered subagents (Opus, Sonnet, Haiku), a test-first pipeline, and two skills for debugging and security review that know your stack.
+**agents-kit** is a Claude Code plugin (repo: `fullstack-ts-rust`) for **fullstack TypeScript and Rust** work: web and backend, mobile, and desktop. It gives you tiered subagents (Opus, Sonnet, Haiku), a test-first pipeline, and two skills for debugging and security review that know your stack.
 
 ## Stack coverage
 
@@ -26,11 +26,11 @@ The agents and skills detect which of these a repo uses (from `package.json`, `C
 | `Explore` | Haiku | high | Read-only codebase search (replaces the built-in, see Notes) |
 | `general-purpose` | Haiku | max | Catch-all research and multi-step tasks (replaces the built-in, see Notes) |
 
-Plugin agents are called `fullstack-ts-rust:developer` and so on. Claude picks them from their descriptions, or you can ask for one by name.
+Plugin agents are called `agents-kit:developer` and so on. Claude picks them from their descriptions, or you can ask for one by name.
 
 ### Command
 
-`/fullstack-ts-rust:tdd <feature or bug>` runs one behavior at a time through plan, red, green, and review, with a gate between phases so green never starts before red is confirmed. Each phase runs in its own context.
+`/agents-kit:tdd <feature or bug>` runs one behavior at a time through plan, red, green, and review, with a gate between phases so green never starts before red is confirmed. Each phase runs in its own context.
 
 ### Skills
 
@@ -44,7 +44,7 @@ Plugin agents are called `fullstack-ts-rust:developer` and so on. Claude picks t
     - **Rust:** `unsafe` and FFI, panics, integer overflow and casts, injection and path traversal, crypto, `cargo audit` and `cargo deny`.
 - **`debugging`** is evidence-first root-cause debugging: reproduce, trace backward, one hypothesis at a time, fix once, add a regression test. After three failed fixes it stops and questions the design. It includes starting points for NestJS, Better Auth, Expo, Tauri, and Rust.
 
-They load automatically when relevant, or run `/fullstack-ts-rust:security-audit` and `/fullstack-ts-rust:debugging`.
+They load automatically when relevant, or run `/agents-kit:security-audit` and `/agents-kit:debugging`.
 
 ### Bundled dependency
 
@@ -54,7 +54,7 @@ The plugin depends on [ponytail](https://github.com/DietrichGebert/ponytail) (MI
 
 ```
 /plugin marketplace add algochad/fullstack-ts-rust
-/plugin install fullstack-ts-rust@fullstack-ts-rust
+/plugin install agents-kit@fullstack-ts-rust
 ```
 
 Restart Claude Code afterwards. To try it from a local checkout: `claude --plugin-dir /path/to/fullstack-ts-rust`.

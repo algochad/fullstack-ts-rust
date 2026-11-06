@@ -1,6 +1,6 @@
 {
-  "name": "fullstack-ts-rust",
-  "version": "2.0.0",
+  "name": "agents-kit",
+  "version": "2.1.0",
   "description": "Fullstack agent kit for TypeScript web and backend (React, NestJS, Better Auth), React Native with Expo, Tauri desktop and mobile, and Rust. Tiered Opus/Sonnet/Haiku subagents, a TDD pipeline, and debugging and security-audit skills.",
   "author": {
     "name": "algochad"
@@ -9,7 +9,7 @@
   "dependencies": [
     "ponytail"
   ],
-  "displayName": "Fullstack TypeScript + Rust",
+  "displayName": "Agents Kit: Fullstack TypeScript + Rust",
   "repository": "https://github.com/algochad/fullstack-ts-rust",
   "keywords": [
     "typescript",

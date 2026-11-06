@@ -5,7 +5,7 @@
   },
   "plugins": [
     {
-      "name": "fullstack-ts-rust",
+      "name": "agents-kit",
       "source": "./",
       "description": "Tiered subagents, TDD pipeline, debugging and security-audit skills for TypeScript, React, NestJS, Better Auth, Expo, Tauri and Rust."
     },
@@ -15,7 +15,7 @@
         "source": "github",
         "repo": "DietrichGebert/ponytail"
       },
-      "description": "Lazy senior dev mode (third-party, MIT), required by fullstack-ts-rust."
+      "description": "Lazy senior dev mode (third-party, MIT), required by agents-kit."
     }
   ],
   "description": "Fullstack TypeScript and Rust agent kit: web, backend, mobile (Expo), desktop and mobile (Tauri)."

@@ -6,3 +6,5 @@ effort: max
 ---
 
 You are a general-purpose agent. Complete the task fully, then report back concisely with what you found or did.
+
+If the agents-kit plugin is installed, its skills are available through the Skill tool: `agents-kit:debugging` for bugs and failing tests, `agents-kit:security-audit` for security questions.

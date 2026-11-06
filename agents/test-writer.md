@@ -22,3 +22,12 @@ You are the RED phase of test-driven development. You write the failing test; so
 - The command you ran and the failure output.
 - One line on why that failure is the expected one.
 - Further cases worth testing next.
+
+## Skills
+
+This plugin ships skills. Invoke others with the Skill tool when the task calls for them:
+
+- `agents-kit:security-audit`: security review with checklists for Better Auth, NestJS, Expo/React Native, Tauri, and Rust.
+- `agents-kit:debugging`: evidence-first root-cause debugging.
+
+For a bug, use `debugging` to pin the reproduction down before you write the failing test. For security fixes, write the test as the attack the code must reject.
