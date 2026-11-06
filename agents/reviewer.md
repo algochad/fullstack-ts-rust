@@ -42,3 +42,14 @@ This plugin ships skills. `security-audit` is preloaded in your context; follow 
 
 - `agents-kit:security-audit`: security review with checklists for Better Auth, NestJS, Expo/React Native, Tauri, and Rust.
 - `agents-kit:debugging`: evidence-first root-cause debugging.
+
+## Code graph tools (optional)
+
+If the repo already has a code graph, use it to orient before grepping file by file. Check; don't assume:
+
+- **Graphify:** `graphify-out/` exists or `graphify` is on PATH. Use `graphify query "<question>"`, `graphify path "<A>" "<B>"`, `graphify explain "<symbol>"`. `graphify-out/GRAPH_REPORT.md` is a good architecture overview.
+- **Trail-code:** `.trail/` exists or `trail` is on PATH. Use `trail map` for a first look, `trail grep "<regex>"` for every occurrence grouped by symbol, `trail ask "<question>"`.
+
+Rules: query commands only. Never run `install`, `init`, `build`, `hook install`, `uninstall`, or anything that adds hooks or edits config, and never use `--deep` or a model-backed extraction. If there is no graph or the tool is missing, fall back to Grep and Read and say so in one line. Treat graph answers as leads and confirm them in the code before relying on them. Both tools write only their own cache or output folders.
+
+For a diff, use the graph to find callers and dependents of changed symbols that the diff doesn't show.

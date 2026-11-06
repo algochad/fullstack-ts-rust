@@ -61,6 +61,22 @@ Restart Claude Code afterwards. To try it from a local checkout: `claude --plugi
 
 If you already installed ponytail from its own marketplace, uninstall that copy first (`claude plugin uninstall ponytail@ponytail`), or you will have two.
 
+## Optional companions: code graph tools
+
+Two third-party tools build a queryable map of a codebase. They are **not plugins**, so this plugin can't install them for you; they are separate CLIs you install yourself. If one is present in a repo, `architect`, `developer`, `reviewer`, and `Explore` use it (query commands only) to orient before grepping.
+
+| Tool | What it does | Install (from its README) | License |
+|---|---|---|---|
+| [Graphify](https://github.com/Graphify-Labs/graphify) | Turns code, docs, SQL, and configs into a knowledge graph. Code is parsed locally with tree-sitter, with no model call. Docs and PDFs use a model | `uv tool install graphifyy`, then `graphify install` | Apache-2.0 |
+| [Trail-code](https://github.com/trailhq/Trail-Code) | Code map plus saved team "learnings" and hooks for Claude Code. The map is built locally | `npm install -g @trailhq/trail-code && trail init` | MIT |
+
+Read before installing:
+- Both register their own hooks and skills in Claude Code (`graphify install`, `trail init`), and both nudge the agent to search differently. Pick one rather than running both.
+- `trail init` reads your past Claude Code transcripts and recent PR review comments for the repo, and sends anonymous usage stats unless you run `trail telemetry disable` or set `DO_NOT_TRACK=1`. A Trail workspace is opt-in.
+- Graphify has no telemetry but logs your queries to `~/.cache/graphify-queries.log` (opt out: `GRAPHIFY_QUERY_LOG_DISABLE=1`).
+- The Graphify package name really is `graphifyy` (two y's), as its README states. Check the spelling against the repo before installing.
+- The agents never run install, init, build, or hook commands themselves.
+
 ## Requirements
 
 - **Node** on `PATH` for the override hook (see Notes).
