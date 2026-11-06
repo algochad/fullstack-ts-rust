@@ -1,6 +1,6 @@
 {
   "name": "agents-kit",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Fullstack agent kit for TypeScript web and backend (React, NestJS, Better Auth), React Native with Expo, Tauri desktop and mobile, and Rust. Tiered Opus/Sonnet/Haiku subagents, a TDD pipeline, and debugging and security-audit skills.",
   "author": {
     "name": "algochad"
