@@ -58,7 +58,13 @@ The usual stacks here are web and backend TypeScript (React, NestJS, Better Auth
 If the change touches anything a user sees in a browser or window, unit tests are not enough. Run the real app and exercise the changed flow end to end.
 
 - Always run headless and windowless. Never open a visible window, and never take over the user's mouse or keyboard. If a tool can only run with a visible window, don't use it; verify another way and say so.
-- Prefer, in order: the project's existing e2e setup (Playwright, Cypress), then a short Playwright script (Node or Python) in headless mode, then plain HTTP requests against the dev server for non-visual behavior. Use a browser MCP tool only if it runs in the background.
+- Choose the tool in this order:
+  1. The project's existing e2e setup (Playwright, Cypress), run headless.
+  2. A browser tool Claude already provides, so you don't need Playwright: the built-in browser pane (tools named `mcp__Claude_Browser__*`; read the `anthropic-skills:built-in-browser` skill first). Use it only if those tools are in your tool list. It is Claude's own pane, not the user's browser.
+  3. A short headless Playwright script (Node or Python).
+  4. Plain HTTP requests against the dev server, for non-visual behavior.
+- Do not use Claude in Chrome (`mcp__claude-in-chrome__*`, skill `claude-in-chrome`) or computer use unless the user explicitly asked for it. They drive the user's real Chrome or desktop, opening tabs, taking focus, and interfering with their work. If you think a visual check needs one, stop and ask the main agent to ask the user, and report the check as unverified in the meantime.
+- Read the matching skill before first use of any browser tool, and check that its tools are actually in your tool list. If they aren't, fall back to the next option.
 - Start the dev server in the background on a free port, wait until it responds, and stop it when you finish. Put throwaway scripts and screenshots in a temp or scratchpad directory, not the repo, unless the project wants them as tests.
 - Check the real path a user would take: the page loads with no console errors, the changed element renders, and the interaction works (click, type, submit) with the expected result. Look at a screenshot when layout matters.
 - If you can't run it (missing browser, needs credentials, needs hardware), say exactly what you couldn't verify. Never claim a smoke test passed that you didn't run.

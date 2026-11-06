@@ -64,8 +64,8 @@ If you already installed ponytail from its own marketplace, uninstall that copy 
 ## Requirements
 
 - **Node** on `PATH` for the override hook (see Notes).
-- **Playwright** (or the project's own e2e setup) for the developer agent's smoke tests. Without it the agent reports what it couldn't verify.
-- Smoke tests run headless and windowless. Expo device or simulator runs and Tauri windows are not launched.
+- For the developer agent's UI smoke tests, any one of: the project's own e2e setup, Claude's built-in browser tools (no install needed, when available), or Playwright. Without any, the agent reports what it couldn't verify.
+- Smoke tests run headless or in Claude's own browser pane. The agent will not use Claude in Chrome or computer use unless you explicitly ask, because they take over your real browser or desktop. Expo device or simulator runs and Tauri windows are not launched.
 
 ## Notes
 
