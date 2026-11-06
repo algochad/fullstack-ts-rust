@@ -1,9 +1,15 @@
 {
   "name": "agents-kit",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Tiered subagents (Opus architect, Sonnet test-writer and developer, Haiku reviewer) with a /agents-kit:tdd pipeline and debugging and security-audit skills, aimed at TypeScript web/backend, NestJS, Better Auth, Expo, Tauri and Rust.",
   "author": {
     "name": "algochad"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": [
+    {
+      "name": "ponytail",
+      "marketplace": "ponytail"
+    }
+  ]
 }

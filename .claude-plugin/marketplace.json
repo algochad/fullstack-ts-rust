@@ -1,7 +1,17 @@
 {
   "name": "agents-kit",
-  "owner": { "name": "algochad" },
+  "owner": {
+    "name": "algochad"
+  },
   "plugins": [
-    { "name": "agents-kit", "source": "./", "description": "Tiered subagents (Opus, Sonnet, Haiku) with a TDD pipeline." }
-  ]
+    {
+      "name": "agents-kit",
+      "source": "./",
+      "description": "Tiered subagents (Opus, Sonnet, Haiku) with a TDD pipeline."
+    }
+  ],
+  "allowCrossMarketplaceDependenciesOn": [
+    "ponytail"
+  ],
+  "description": "Tiered subagents (Opus, Sonnet, Haiku) with a TDD pipeline, plus debugging and security-audit skills."
 }
