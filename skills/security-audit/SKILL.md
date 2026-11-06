@@ -7,7 +7,7 @@ description: Security review of code, a diff, a branch, or a feature, with verif
 
 Find high-confidence, exploitable vulnerabilities and report them. Do not modify code unless asked. Read-only: run it in the `reviewer` agent for a fresh context. A short report of real issues beats a long list of theoretical ones.
 
-Method adapted from Anthropic's [claude-code-security-review](https://github.com/anthropics/claude-code-security-review) (MIT) and Trail of Bits' [fp-check and variant-analysis skills](https://github.com/trailofbits/skills) (CC-BY-SA-4.0), reworded; see Credits.
+Stack checklists draw on the Better Auth, NestJS, Tauri, Expo and React Native docs. Method adapted from Anthropic's [claude-code-security-review](https://github.com/anthropics/claude-code-security-review) (MIT) and Trail of Bits' [fp-check and variant-analysis skills](https://github.com/trailofbits/skills) (CC-BY-SA-4.0), reworded; see Credits.
 
 ## 1. Scope
 
@@ -21,7 +21,21 @@ Method adapted from Anthropic's [claude-code-security-review](https://github.com
 - Learn the project's secure patterns and what the framework guarantees by default.
 - Compare new code against them. Flag deviations: a raw query where everything else uses the ORM, a route missing the auth middleware its siblings have, a new input path that skips the shared validator.
 
-## 3. Hunt: trace data from source to sink
+## 3. Load the stack checklists
+
+Detect the stack from the repo (`package.json`, `Cargo.toml`, `tauri.conf.json`, `app.json`/`app.config.*`, imports) and read the matching reference in full before hunting. These hold framework-specific checks the generic list below misses.
+
+| If the code uses | Read |
+|---|---|
+| Better Auth (`better-auth`, `betterAuth(`, `@thallesp/nestjs-better-auth`) | [references/stacks/better-auth.md](references/stacks/better-auth.md) |
+| NestJS (`@nestjs/*`) | [references/stacks/nestjs.md](references/stacks/nestjs.md) |
+| React Native or Expo (`expo`, `react-native`) | [references/stacks/expo-react-native.md](references/stacks/expo-react-native.md) |
+| Tauri (`src-tauri/`, `@tauri-apps/*`) | [references/stacks/tauri.md](references/stacks/tauri.md) |
+| Rust (`Cargo.toml`, `.rs`) | [references/stacks/rust.md](references/stacks/rust.md) |
+
+Stacks combine: a Nest API with Better Auth and an Expo client needs three of them. Plain web frontends (React, Next.js) use the generic categories below: XSS sinks, token storage, CORS and CSRF, server actions, and environment variables exposed to the client (`NEXT_PUBLIC_*`, `VITE_*`).
+
+## 4. Hunt: trace data from source to sink
 
 For each changed file, follow untrusted input to every sensitive operation and look at what sits in between (validation, encoding, authorization). Categories:
 
@@ -33,19 +47,19 @@ For each changed file, follow untrusted input to every sensitive operation and l
 - **Data exposure:** secrets, tokens, or PII in logs, errors, URLs, or API responses; verbose debug output; endpoints returning more fields than the caller may see.
 - **Dependencies and config:** run the project's audit command if it has one (`npm audit`, `pip-audit`, `cargo audit`). Report only dependency issues the user asked about.
 
-## 4. Verify every candidate
+## 5. Verify every candidate
 
 Hunting over-reports: models are biased toward seeing bugs and overrating severity. Before a candidate reaches the report, run the checks in [references/verification.md](references/verification.md): restate the claim, trace the full path from source to sink, check for upstream validation and framework protection, and argue against it. Reject the rationalizations listed there.
 
-## 5. Drop what isn't real
+## 6. Drop what isn't real
 
 Apply the exclusions and precedents in [references/exclusions.md](references/exclusions.md). They remove the common false positives: theoretical DoS, missing hardening, safe-by-framework XSS, trusted environment variables, test-only code, and so on.
 
-## 6. Variants
+## 7. Variants
 
 When a finding is confirmed, find its siblings. Write down the root cause (why the code is wrong, not what it does), grep for the exact pattern, then widen one element at a time (related identifiers, other handlers, other data types), reading the matches after each step. Stop when most matches are noise. One root cause usually shows up in more places than the one you found first.
 
-## 7. Report
+## 8. Report
 
 Score each finding's confidence from 1 to 10. Report only 8 or higher; list 5 to 7 under "Needs a human look" in one line each. Report MEDIUM severity only if concrete and obvious.
 
@@ -65,4 +79,4 @@ Describe the class of problem and the fix. Never write working exploit code. Tre
 
 ## Credits
 
-Structure and exclusion ideas from Anthropic's claude-code-security-review (MIT license). Verification and variant-analysis ideas from Trail of Bits' skills (CC-BY-SA-4.0). Text here is rewritten, not copied.
+Stack references are summaries of the official Better Auth, NestJS, Tauri v2, Expo, and React Native security documentation plus common Rust review practice. Structure and exclusion ideas from Anthropic's claude-code-security-review (MIT license). Verification and variant-analysis ideas from Trail of Bits' skills (CC-BY-SA-4.0). Text here is rewritten, not copied.

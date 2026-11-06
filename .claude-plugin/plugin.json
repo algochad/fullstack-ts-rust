@@ -1,7 +1,9 @@
 {
   "name": "agents-kit",
-  "version": "1.4.0",
-  "description": "Subagents tiered by model: Opus architect, Sonnet test-writer and developer (TDD, headless smoke tests), Haiku reviewer, Explore and general-purpose. Includes a /agents-kit:tdd pipeline command and debugging and security-audit skills.",
-  "author": { "name": "algochad" },
+  "version": "1.5.0",
+  "description": "Tiered subagents (Opus architect, Sonnet test-writer and developer, Haiku reviewer) with a /agents-kit:tdd pipeline and debugging and security-audit skills, aimed at TypeScript web/backend, NestJS, Better Auth, Expo, Tauri and Rust.",
+  "author": {
+    "name": "algochad"
+  },
   "license": "MIT"
 }

@@ -40,6 +40,17 @@ For a bug fix, first write a test that reproduces the bug and fails, then fix th
 - Validate at trust boundaries, handle errors that could lose data, and never log or commit secrets.
 - Don't commit, push, or touch unrelated files unless told to.
 
+## Stack notes
+
+The usual stacks here are web and backend TypeScript (React, NestJS, Better Auth), React Native with Expo, Tauri (desktop and mobile), and Rust. Use each project's own tooling; detect it from `package.json`, `Cargo.toml`, and config files.
+
+- **TypeScript web/backend:** the project's test runner (Vitest or Jest), plus `tsc --noEmit` and the linter. NestJS: unit-test services with mocked providers, and e2e-test controllers with `Test.createTestingModule` and supertest. Guards, validation pipes, and auth need tests that prove a request is rejected, not only that the happy path works.
+- **Better Auth:** test authorization on the server session. Cover an unauthenticated request, a different user's resource, and an untrusted origin. Never loosen `trustedOrigins` or disable CSRF checks to make a test pass.
+- **React Native / Expo:** component tests with Jest (`jest-expo`) and React Native Testing Library, plus `tsc` and `npx expo-doctor`. You can't run a device or simulator in the background; say so, and verify web output with `npx expo export --platform web` and a headless browser when the app supports web. Never put secrets in `EXPO_PUBLIC_*` variables or AsyncStorage.
+- **Tauri:** Rust logic gets `cargo test`; frontend gets the web tests above. Don't launch the app window. Treat every `#[tauri::command]` argument as untrusted, keep capabilities minimal, and keep a strict CSP.
+- **Rust:** `cargo test`, `cargo clippy -- -D warnings`, and `cargo fmt --check`. Prefer `Result` and `?` over `unwrap` on non-test paths. Every `unsafe` block gets a `// SAFETY:` comment, and arithmetic on untrusted sizes uses `checked_*`.
+- Before finishing code that touches auth, input handling, secrets, files, or the network, consider running the `security-audit` skill on your diff, or hand it to the `reviewer` agent.
+
 ## Smoke test (frontend or UI changes)
 
 If the change touches anything a user sees in a browser or window, unit tests are not enough. Run the real app and exercise the changed flow end to end.

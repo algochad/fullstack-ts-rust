@@ -1,6 +1,6 @@
 # agents-kit
 
-A Claude Code plugin of subagents tiered by model, built around a TDD pipeline.
+A Claude Code plugin of subagents tiered by model, built around a TDD pipeline. Aimed at web and backend TypeScript (React, NestJS, Better Auth), React Native with Expo, Tauri (desktop and mobile), and Rust.
 
 | Agent | Model | Effort | Role |
 |---|---|---|---|
@@ -11,7 +11,7 @@ A Claude Code plugin of subagents tiered by model, built around a TDD pipeline.
 | `Explore` (override) | haiku | high | Read-only codebase search |
 | `general-purpose` (override) | haiku | max | Catch-all research and multi-step tasks |
 
-Skills: `debugging` (reproduce, find the root cause, fix once, regression test) and `security-audit` (diff-focused hunt, per-finding verification, false-positive exclusions, variant search, confidence-scored report). They load automatically when relevant, or call `/agents-kit:debugging` and `/agents-kit:security-audit`.
+Skills: `debugging` (reproduce, find the root cause, fix once, regression test) and `security-audit` (stack checklists for Better Auth, NestJS, Expo/React Native, Tauri and Rust; diff-focused hunt, per-finding verification, false-positive exclusions, variant search, confidence-scored report). They load automatically when relevant, or call `/agents-kit:debugging` and `/agents-kit:security-audit`.
 
 Command: `/agents-kit:tdd <feature>` runs plan, red, green, review with a gate between phases.
 
