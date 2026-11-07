@@ -6,7 +6,7 @@ const path = require("path");
 const { spawnSync } = require("child_process");
 const lib = require("./lib");
 
-const sh = (cmd, args, opts) => spawnSync(cmd, args, { encoding: "utf8", env: lib.toolEnv(), ...opts });
+const sh = (cmd, args, opts) => spawnSync(cmd, args, { encoding: "utf8", env: lib.toolEnv(), maxBuffer: 256 << 20, ...opts });
 const repoRoot = () => {
   const r = sh("git", ["rev-parse", "--show-toplevel"]);
   return r.status === 0 ? r.stdout.trim() : null;
@@ -74,20 +74,30 @@ function changedFiles(root) {
   const r = sh("git", ["status", "--porcelain", "--no-renames", "-uall"], { cwd: root });
   return r.stdout.split("\n").filter(Boolean).map((l) => l.slice(3).replace(/^"|"$/g, "")).filter((f) => !/^(graphify-out|\.trail)\//.test(f));
 }
+// Reads graph.json directly: exact file/label match and one hop of edges, so the answer does not depend on query fuzziness.
 function impact(root, args) {
-  const json = args.includes("--json"), targets = args.filter((a) => a !== "--json");
+  const json = args.includes("--json"), targets = args.filter((a) => a !== "--json").map((a) => path.relative(root, path.resolve(root, a)));
   const own = targets.length ? targets : changedFiles(root);
   if (!own.length) return console.log("nothing changed and no target given");
-  if (!lib.ready(lib.graphifyBin()) || !fs.existsSync(graphPath(root))) needGraph(root);
-  const near = new Map();
-  for (const t of own) {
-    const g = graphQuery(root, path.basename(t), 2);
-    for (const n of g?.nodes || []) if (n.source_file && !own.includes(n.source_file)) near.set(n.source_file, n);
+  let g;
+  try { g = JSON.parse(fs.readFileSync(graphPath(root), "utf8")); } catch { needGraph(root); }
+  const byId = new Map(g.nodes.map((n) => [n.id, n]));
+  const mine = new Set(g.nodes.filter((n) => own.includes(n.source_file) || own.includes(n.label?.replace(/\(\)$/, ""))).map((n) => n.id));
+  const files = new Set(own.concat([...mine].map((id) => byId.get(id).source_file)));
+  const usedBy = new Map(), uses = new Map();
+  for (const e of g.links || g.edges || []) {
+    const from = mine.has(e.source), to = mine.has(e.target);
+    if (from === to) continue;
+    const [bucket, other] = from ? [uses, byId.get(e.target)] : [usedBy, byId.get(e.source)];
+    if (other?.source_file && !files.has(other.source_file)) bucket.set(other.source_file, (bucket.get(other.source_file) || 0) + 1);
   }
-  const ls = touching(learnings(root), [...own, ...near.keys()]);
-  if (json) return console.log(JSON.stringify({ target: own, neighbors: [...near.keys()], learnings: ls }, null, 2));
-  console.log("target: " + own.join(", "));
-  console.log(near.size ? "neighbors in the graph (2 hops, either direction): " + [...near.keys()].join(", ") : "neighbors in the graph: none");
+  const names = (m) => [...m.keys()];
+  const ls = touching(learnings(root), [...files, ...names(usedBy), ...names(uses)]);
+  if (json) return console.log(JSON.stringify({ target: own, matched_nodes: mine.size, used_by: names(usedBy), uses: names(uses), learnings: ls }, null, 2));
+  console.log("target: " + own.join(", ") + (mine.size ? ` (${mine.size} graph nodes)` : " (not in the graph: new file, or `graphify update .` is due)"));
+  const show = (label, m) => console.log(`${label} (${m.size}): ` + (names(m).slice(0, 25).join(", ") || "none") + (m.size > 25 ? ", ..." : ""));
+  show("used by", usedBy);
+  show("uses", uses);
   printLearnings(ls);
 }
 

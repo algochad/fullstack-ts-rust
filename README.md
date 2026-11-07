@@ -58,7 +58,7 @@ They meet at the file path: a graph node's `source_file` against a learning's `t
 ```
 ctx init                         # once per repo: graph + learnings folder, no model calls
 ctx where login                  # code locations + the learnings on those files
-ctx impact [file...]             # graph neighbors of the change + learnings on them (default: git changes)
+ctx impact [file...]             # who uses the target, what it uses, + learnings on them (default: git changes)
 ctx learn --title ... -m ...     # save a learning (the main agent does this, after you agree)
 ctx status
 ```

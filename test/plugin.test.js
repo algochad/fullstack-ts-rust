@@ -15,7 +15,20 @@ const git = (...a) => spawnSync("git", ["-c", "user.email=t@t", "-c", "user.name
 fs.mkdirSync(path.join(repo, "src"), { recursive: true });
 fs.mkdirSync(path.join(repo, "graphify-out"));
 fs.mkdirSync(path.join(repo, ".trail", "learnings"), { recursive: true });
-fs.writeFileSync(path.join(repo, "graphify-out", "graph.json"), "{}");
+fs.writeFileSync(path.join(repo, "graphify-out", "graph.json"), JSON.stringify({
+  nodes: [
+    { id: "auth", label: "auth.ts", source_file: "src/auth.ts" },
+    { id: "login", label: "login()", source_file: "src/auth.ts" },
+    { id: "session", label: "session.ts", source_file: "src/session.ts" },
+    { id: "pay", label: "pay.ts", source_file: "src/billing/pay.ts" },
+    { id: "ref_zod", label: "zod" },
+  ],
+  links: [
+    { source: "session", target: "login", relation: "calls" },
+    { source: "auth", target: "pay", relation: "imports_from" },
+    { source: "auth", target: "ref_zod", relation: "imports_from" },
+  ],
+}));
 fs.writeFileSync(path.join(repo, "src", "auth.ts"), "export const login = 1\n");
 fs.writeFileSync(path.join(repo, ".trail", "learnings", "a.md"), '---\ntitle: login must not cache\nauthor: sam\ndate: 2026-11-07\nstatus: active\ntouches:\n  - "src/auth.ts#login"\n---\nbody\n');
 fs.writeFileSync(path.join(repo, ".trail", "learnings", "b.md"), "---\ntitle: old thing\nstatus: superseded\ntouches:\n  - src/auth.ts\n---\n");
@@ -47,14 +60,16 @@ test("ctx where --json carries the learnings", () => {
   assert.deepStrictEqual(j.learnings.map((l) => l.title), ["login must not cache"]);
 });
 
-test("a directory touch matches files under it", () => {
-  const j = JSON.parse(ctx("impact", "src/billing/x.ts", "--json").stdout);
-  assert.ok(j.learnings.some((l) => l.title === "other dir"));
+test("ctx impact reads one hop of edges: used by, uses, and learnings on all of them", () => {
+  const j = JSON.parse(ctx("impact", "src/auth.ts", "--json").stdout);
+  assert.deepStrictEqual(j.used_by, ["src/session.ts"]);
+  assert.deepStrictEqual(j.uses, ["src/billing/pay.ts"], "externals without a source file are skipped");
+  assert.deepStrictEqual(j.learnings.map((l) => l.title).sort(), ["login must not cache", "other dir"], "a directory touch matches files under it");
 });
 
-test("ctx impact lists graph neighbors that are not the target", () => {
-  const r = ctx("impact", "src/auth.ts");
-  assert.match(r.stdout, /neighbors.*src\/session\.ts/);
+test("ctx impact accepts a symbol label and says when the target is not in the graph", () => {
+  assert.deepStrictEqual(JSON.parse(ctx("impact", "login", "--json").stdout).used_by, ["src/session.ts"]);
+  assert.match(ctx("impact", "src/new.ts").stdout, /not in the graph/);
 });
 
 test("ctx without a graph says how to get one", () => {
