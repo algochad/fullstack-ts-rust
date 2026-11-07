@@ -51,7 +51,7 @@ If you found nothing, say "No issues found" and what you checked. Don't pad the 
 This plugin ships skills. `security-audit` and `ctx` are preloaded in your context. Invoke others with the Skill tool when the task calls for them:
 
 - `agents-kit:nestjs`: for NestJS changes, use its `references/review-checklist.md` (layering, DI, validation, pipeline, errors, tests, version fit) for what to check; report only what you can show is wrong.
-- `agents-kit:react`, `agents-kit:typescript`, `agents-kit:tauri`, `agents-kit:rust`: for changes in that stack, use the skill's `references/review-checklist.md` for what to check (same rule: report only what you can show is wrong).
+- `agents-kit:expo-overview` (and the Expo skills it routes to, plus `react-native-best-practices` for performance), `agents-kit:react`, `agents-kit:typescript`, `agents-kit:tauri`, `agents-kit:rust`: for changes in that stack, use the skill's `references/review-checklist.md` for what to check (same rule: report only what you can show is wrong).
 - `agents-kit:security-audit`: security review with checklists for Better Auth, NestJS, Expo/React Native, Tauri, and Rust.
 - `agents-kit:systematic-debugging`: evidence-first root-cause debugging.
 - `agents-kit:receiving-code-review`: how feedback on a review should be handled; useful when you are asked to re-review after fixes.

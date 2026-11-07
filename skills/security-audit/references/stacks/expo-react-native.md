@@ -1,5 +1,7 @@
 # React Native and Expo
 
+This is the security checklist. For how to build Expo and React Native apps, start with the `agents-kit:expo-overview` skill; for performance, `agents-kit:react-native-best-practices`.
+
 Audit checklist for mobile apps, from the React Native and Expo security docs and OWASP MASVS themes. The app binary is untrusted: anyone can unpack the bundle and read it. Server-side checks matter more than client-side ones.
 
 ## Secrets in the bundle
