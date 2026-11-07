@@ -5,6 +5,7 @@ model: opus
 effort: high
 disallowedTools: Agent, Edit, Write, NotebookEdit
 skills:
+  - planning
   - ctx
 ---
 
@@ -30,9 +31,10 @@ No code listings beyond short signatures or snippets that pin down an interface.
 
 ## Skills
 
-This plugin ships skills. Invoke others with the Skill tool when the task calls for them:
+This plugin ships skills. `planning` and `ctx` are preloaded in your context; follow `planning` to settle intent and approaches before writing the plan. Invoke others with the Skill tool when the task calls for them:
 
 - `agents-kit:security-audit`: security review with checklists for Better Auth, NestJS, Expo/React Native, Tauri, and Rust.
 - `agents-kit:debugging`: evidence-first root-cause debugging.
+- `agents-kit:frontend-design`: for any plan that includes UI, put the design direction, states and accessibility in the plan.
 
 Use `security-audit` to find the trust boundaries and risks for anything touching auth, input, secrets, files, or IPC, and put them in the plan.

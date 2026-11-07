@@ -32,6 +32,8 @@ Plugin agents are called `agents-kit:developer` and so on. Claude picks them fro
 
 `/agents-kit:tdd <feature or bug>` runs one behavior at a time through plan, red, green, and review, with a gate between phases so green never starts before red is confirmed. Each phase runs in its own context.
 
+`/agents-kit:review [PR | branch | path] [--comment]` runs a parallel review (bugs in the diff, problems that need context, rule violations), validates each candidate in a fresh agent, and reports only the findings that survive. It posts to GitHub only with `--comment`.
+
 ### Skills
 
 - **`security-audit`** finds exploitable vulnerabilities, verifies each one, and reports only high-confidence findings.
@@ -44,7 +46,12 @@ Plugin agents are called `agents-kit:developer` and so on. Claude picks them fro
     - **Rust:** `unsafe` and FFI, panics, integer overflow and casts, injection and path traversal, crypto, `cargo audit` and `cargo deny`.
 - **`debugging`** is evidence-first root-cause debugging: reproduce, trace backward, one hypothesis at a time, fix once, add a regression test. After three failed fixes it stops and questions the design. It includes starting points for NestJS, Better Auth, Expo, Tauri, and Rust.
 
-They load automatically when relevant, or run `/agents-kit:security-audit` and `/agents-kit:debugging`. The `ctx`, `graphify` and `trail` skills (the last two are the tools' own, unmodified apart from the fork changes) cover the code graph and team memory below.
+- **`code-review`** reviews a diff, branch or PR for bugs, broken callers, security problems and violations of the repo's own `CLAUDE.md` / `AGENTS.md`. Every candidate is verified and confidence-scored, and only findings at 80 or above are reported, with what was and wasn't checked. It also covers acting on review feedback you receive (verify before you agree).
+- **`frontend-design`** guides UI work in React web, Expo/React Native and Tauri: follow the project's design system first, ground the look in the product and its users, plan tokens and layout before markup, avoid templated defaults, design empty/loading/error states, write real copy, and check a real render. Platform notes for each stack.
+- **`verification`** is evidence before claims: run the command that proves it, read the output, then say it. Preloaded in the `developer`.
+- **`planning`** settles what to build and why, lays out approaches, and writes small steps with exact files and the test for each. Preloaded in the `architect`.
+
+They load automatically when relevant, or run them by name, e.g. `/agents-kit:security-audit`. The `ctx`, `graphify` and `trail` skills (the last two are the tools' own, unmodified apart from the fork changes) cover the code graph and team memory below.
 
 ### ctx: code graph + team memory
 
@@ -111,7 +118,7 @@ Separate contexts per TDD phase, phase gates, fresh-context review, few agents w
 
 ## Credits
 
-The skills are rewritten, not copied, from ideas in [anthropics/claude-code-security-review](https://github.com/anthropics/claude-code-security-review) (MIT), [trailofbits/skills](https://github.com/trailofbits/skills) (CC-BY-SA-4.0; fp-check and variant-analysis), and [obra/superpowers](https://github.com/obra/superpowers) (MIT; systematic-debugging). Stack checklists summarize the official Better Auth, NestJS, Tauri, Expo, and React Native security documentation.
+The skills are rewritten, not copied, from ideas in [anthropics/claude-code-security-review](https://github.com/anthropics/claude-code-security-review) (MIT), [trailofbits/skills](https://github.com/trailofbits/skills) (CC-BY-SA-4.0; fp-check and variant-analysis), [obra/superpowers](https://github.com/obra/superpowers) (MIT; systematic-debugging, verification-before-completion, brainstorming, writing-plans, requesting and receiving code review), and Anthropic's official `frontend-design` and `code-review` (Apache-2.0, from [anthropics/skills](https://github.com/anthropics/skills) and [claude-plugins-official](https://github.com/anthropics/claude-plugins-official)). Stack checklists summarize the official Better Auth, NestJS, Tauri, Expo, and React Native security documentation.
 
 ctx bundles forks of [Graphify](https://github.com/Graphify-Labs/graphify) (Apache-2.0, with portions MIT; modified by algochad, see `licenses/graphify-NOTICE.txt`) and [Trail-Code](https://github.com/trailhq/Trail-Code) (MIT). Their licenses are in `licenses/`; their skills are shipped under `skills/graphify` and `skills/trail`. They are not affiliated with this plugin or endorsing it.
 

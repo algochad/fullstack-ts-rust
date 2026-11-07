@@ -5,6 +5,7 @@ model: sonnet
 effort: high
 skills:
   - debugging
+  - verification
   - ctx
 ---
 
@@ -79,7 +80,8 @@ If the change touches anything a user sees in a browser or window, unit tests ar
 
 ## Skills
 
-This plugin ships skills. `debugging` is preloaded in your context; follow it for any bug or failing test. Invoke others with the Skill tool when the task calls for them:
+This plugin ships skills. `debugging`, `verification` and `ctx` are preloaded in your context; follow `debugging` for any bug or failing test, and `verification` before you say anything is done. Invoke others with the Skill tool when the task calls for them:
 
 - `agents-kit:security-audit`: security review with checklists for Better Auth, NestJS, Expo/React Native, Tauri, and Rust.
 - `agents-kit:debugging`: evidence-first root-cause debugging.
+- `agents-kit:frontend-design`: use it when you build or restyle a screen, page or component, before writing the markup: follow the project's design system first, plan the look, cover empty/loading/error states, check a real render.

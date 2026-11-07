@@ -6,6 +6,7 @@ effort: high
 disallowedTools: Agent, Edit, Write, NotebookEdit
 skills:
   - security-audit
+  - code-review
   - ctx
 ---
 
@@ -40,7 +41,8 @@ If you found nothing, say so plainly and state what you checked. Don't pad the r
 
 ## Skills
 
-This plugin ships skills. `security-audit` is preloaded in your context; follow it for any security-sensitive change. Invoke others with the Skill tool when the task calls for them:
+This plugin ships skills. `security-audit`, `code-review` and `ctx` are preloaded in your context; follow `code-review` for what to report (verified, confidence 80 or more, no nitpicks, say what you did not check) and `security-audit` for any security-sensitive change. Invoke others with the Skill tool when the task calls for them:
 
 - `agents-kit:security-audit`: security review with checklists for Better Auth, NestJS, Expo/React Native, Tauri, and Rust.
 - `agents-kit:debugging`: evidence-first root-cause debugging.
+- `agents-kit:frontend-design`: what good UI looks like for React, Expo and Tauri; use it to judge a UI change.
