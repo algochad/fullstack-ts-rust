@@ -221,6 +221,23 @@ test("lsp: finds what works, plans an install for what does not, and does not re
   assert.match(require("../scripts/lsp.js").TS.typescript, /^5\./, "TypeScript 7 returns empty LSP results through this server");
 });
 
+test("cohesion: agents and the skills they preload agree on who saves, asks, commits and what the report looks like", () => {
+  const read = (f) => fs.readFileSync(path.join(root, f), "utf8");
+  const architect = read("agents/architect.md"), developer = read("agents/developer.md"), reviewer = read("agents/reviewer.md");
+  // writing-plans tells its reader to save a file and ask the user; the architect can do neither.
+  assert.match(architect, /disallowedTools:.*Write/);
+  assert.match(architect, /do not save a file/i);
+  assert.match(architect, /skip the execution handoff/i);
+  assert.doesNotMatch(architect, /No code listings/, "the plan skill wants exact code and no placeholders");
+  // The SDD implementer template commits and reports in its own format; the prompt must win over the agent's defaults.
+  assert.match(developer, /unless your prompt tells you to/);
+  assert.match(developer, /specifies a report format or status/);
+  assert.match(reviewer, /template wins/i);
+  // The skills each agent preloads exist and are the vendored ones.
+  for (const [f, names] of [["agents/developer.md", ["test-driven-development", "systematic-debugging", "verification-before-completion"]], ["agents/architect.md", ["writing-plans"]], ["agents/test-writer.md", ["test-driven-development"]]])
+    for (const n of names) assert.match(read(f), new RegExp(`^  - ${n}$`, "m"), `${f} preloads ${n}`);
+});
+
 test("every hook script exists and tools.json pins full commits", () => {
   const h = JSON.parse(fs.readFileSync(path.join(root, "hooks", "hooks.json"), "utf8")).hooks;
   for (const g of Object.values(h).flat()) for (const x of g.hooks) {
