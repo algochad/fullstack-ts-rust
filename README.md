@@ -52,6 +52,7 @@ Plugin agents are called `agents-kit:developer` and so on. Claude picks them fro
     - **React Native and Expo:** secrets in the bundle, SecureStore vs AsyncStorage, PKCE, deep links, TLS, WebViews, OTA updates.
     - **Tauri:** capabilities and permissions, scopes, `#[tauri::command]` input handling, CSP, updater, keychain storage.
     - **Rust:** `unsafe` and FFI, panics, integer overflow and casts, injection and path traversal, crypto, `cargo audit` and `cargo deny`.
+- **`archlast-forge:archlast-forge`** is the skill for building apps with [archlast-forge](https://github.com/algochad/archlast-forge) (blueprint, built-ins, CLI, testing, deployment). It lives in its own public repository, [archlast-forge-skills](https://github.com/algochad/archlast-forge-skills) (MIT), and is installed with this plugin as a dependency. It is for archlast-forge projects only: a session-start and subagent-start hook mentions it only when `archlast-forge.json` is found, the agents are told to load it first there, and where its conventions differ from the generic `nestjs`, `react`, `typescript`, `frontend-design` and `security-audit` guidance, its conventions win. The generic skills still cover what it does not decide.
 - **`ctx`** is the front door to the code graph and team memory (below).
 
 **How the parts fit.** `using-superpowers` is the entry point and lists every skill; process skills run first, then `ctx` to find code, then domain skills. Superpowers' subagent templates dispatch this plugin's `developer` (implementer), `reviewer` and `architect` instead of `general-purpose`. `/agents-kit:tdd` is the same red-green-refactor loop split across `test-writer`, `developer` and `reviewer`. The vendored text is unchanged except for marked "In agents-kit" sections, the renamed namespace, `--open` removed from the brainstorming visual companion (it would launch a window), and the subagent templates. One confidence scale (0 to 100, report 80+) and one severity scale (high, medium, low) are used by `reviewer`, `/agents-kit:code-review` and `security-audit`. Specs and plans are saved where upstream saves them (`docs/superpowers/`). If you install the original `superpowers`, `frontend-design` or `code-review` plugins as well, you will have two copies of each.
@@ -96,6 +97,7 @@ ctx status
 The plugin depends on three other plugins and installs them automatically. All are listed in this repo's marketplace, so one install pulls them in:
 
 - [ponytail](https://github.com/DietrichGebert/ponytail) (MIT): a "smallest change that works" mode.
+- **archlast-forge** ([algochad/archlast-forge-skills](https://github.com/algochad/archlast-forge-skills), MIT): the archlast-forge agent skill (see Skills).
 - **typescript-lsp** and **rust-analyzer-lsp**, Anthropic's official language-server plugins from [claude-plugins-official](https://github.com/anthropics/claude-plugins-official), pinned to a commit. They give Claude go-to-definition, references, hover and diagnostics for TypeScript/JavaScript and Rust. Plugins can't install language servers themselves, so agents-kit's session-start installer does: if `typescript-language-server` or `rust-analyzer` does not work on `PATH`, it installs them in the background. TypeScript: `typescript-language-server` 6.0.2 and `typescript` 5.9.3 into the plugin's data folder, linked from `~/.local/bin` (only if that is already on your `PATH`; TypeScript 7 gives empty LSP answers through this server, hence 5.x). Rust: `rustup component add rust-analyzer`. It needs `npm` or `rustup` respectively, never touches a server that already works, retries a failed install after a week, and says so in a session-start line if one is still missing. `AGENTS_KIT_NO_LSP_INSTALL=1` turns it off; Windows only gets the message, not the install.
 
 If you already installed any of these from another marketplace, uninstall that copy, or you will have two.
@@ -109,7 +111,7 @@ If you already installed any of these from another marketplace, uninstall that c
 
 Restart Claude Code afterwards. To try it from a local checkout: `claude --plugin-dir /path/to/fullstack-ts-rust`.
 
-**Updating from before 3.3.0:** `claude plugin update` does not install dependencies that a new version adds, and the plugin then fails to load with "Dependency ... is not installed". Run `claude plugin install agents-kit@fullstack-ts-rust` once (it installs `typescript-lsp`), then `claude plugin install rust-analyzer-lsp@fullstack-ts-rust` if it is still reported missing.
+**Updating from an older version:** `claude plugin update` does not install dependencies that a new version adds, and the plugin then fails to load with "Dependency ... is not installed" (3.3.0 added the LSP plugins, 3.8.0 added `archlast-forge`). Run `claude plugin install agents-kit@fullstack-ts-rust` once, then `claude plugin list`, and `claude plugin install <name>@fullstack-ts-rust` for any dependency still reported missing.
 
 ## Requirements
 

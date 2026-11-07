@@ -241,6 +241,17 @@ test("cohesion: agents and the skills they preload agree on who saves, asks, com
     for (const n of names) assert.match(read(f), new RegExp(`^  - ${n}$`, "m"), `${f} preloads ${n}`);
 });
 
+test("forge-hint speaks only inside an archlast-forge project", () => {
+  const proj = path.join(tmp, "forge-proj", "apps", "web"), plain = path.join(tmp, "plain-proj");
+  fs.mkdirSync(proj, { recursive: true }); fs.mkdirSync(plain, { recursive: true });
+  fs.writeFileSync(path.join(tmp, "forge-proj", "archlast-forge.json"), "{}");
+  const run = (cwd, event) => spawnSync(process.execPath, [path.join(root, "scripts", "forge-hint.js")], { input: JSON.stringify({ cwd, hook_event_name: event }), encoding: "utf8" }).stdout;
+  const o = JSON.parse(run(proj, "SubagentStart"));
+  assert.strictEqual(o.hookSpecificOutput.hookEventName, "SubagentStart");
+  assert.match(o.hookSpecificOutput.additionalContext, /archlast-forge:archlast-forge/);
+  assert.strictEqual(run(plain, "SessionStart"), "", "silent in other projects");
+});
+
 test("every hook script exists and tools.json pins full commits", () => {
   const h = JSON.parse(fs.readFileSync(path.join(root, "hooks", "hooks.json"), "utf8")).hooks;
   for (const g of Object.values(h).flat()) for (const x of g.hooks) {

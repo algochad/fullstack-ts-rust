@@ -31,6 +31,7 @@ Your report is the plan, in the shape the preloaded `writing-plans` skill define
 
 This plugin ships skills. `writing-plans` and `ctx` are preloaded in your context; follow `writing-plans` for the shape of the plan (exact files, a test per step, no placeholders). You cannot ask the user, so where `agents-kit:brainstorming` would ask a question, put the open question and the options (with your recommendation) at the top of your report and plan for the recommended one. The main agent runs `brainstorming` before it hands you a task. Invoke others with the Skill tool when the task calls for them:
 
+- `archlast-forge:archlast-forge`: in an archlast-forge project, plan with its blueprint and built-ins (it beats the generic stack skills); cite the section you relied on.
 - `agents-kit:nestjs`: for a NestJS backend plan, follow its layering and pipeline rules, and check the project's Nest version against its versions reference.
 - `agents-kit:expo-overview`, `agents-kit:react`, `agents-kit:typescript`, `agents-kit:tauri`, `agents-kit:rust`: for a plan in that stack, follow the skill's structure and pipeline rules, and check the project's version against its `references/versions.md`.
 - `agents-kit:security-audit`: security review with checklists for Better Auth, NestJS, Expo/React Native, Tauri, and Rust.

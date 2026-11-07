@@ -17,6 +17,7 @@ Working practice for NestJS backends. Follow the project's own conventions first
 Read `package.json` and the config before suggesting anything:
 - **Nest version** (`@nestjs/core`). 12 needs Node 20.19+ or 22.12+ and ships ESM; 11 made Express 5 the default and reversed the order of termination hooks; behavior differs (see versions.md). Don't paste 10-era snippets into a 12 project.
 - **Platform adapter** (Express or Fastify), **ORM** (Prisma, TypeORM, Drizzle, Mongoose), **test runner** (Jest or Vitest), **module format** (CommonJS or ESM), **validation** (class-validator, or Standard Schema such as Zod on 12), **auth** (Better Auth via `@thallesp/nestjs-better-auth`, or Passport), **monorepo** (`nest-cli.json`, `apps/`, `libs/`).
+- **archlast-forge project** (`archlast-forge.json`): its skill, `archlast-forge:archlast-forge`, wins over this one wherever they differ (Nest imports come from `@archlast/forge-runtime/nest`; its blueprint and built-ins replace custom code).
 - The nearest existing module is the pattern to copy. Match its file layout, naming, DTO style and test style.
 
 ## 2. Structure

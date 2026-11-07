@@ -1,6 +1,6 @@
 {
   "name": "agents-kit",
-  "version": "3.7.0",
+  "version": "3.8.0",
   "description": "Fullstack agent kit for TypeScript web and backend (React, NestJS, Better Auth), React Native with Expo, Tauri desktop and mobile, and Rust. Tiered Opus/Sonnet/Haiku subagents, a TDD pipeline, the Superpowers skills, Anthropic frontend-design and code-review, security-audit, and stack skills for NestJS, React, Expo and React Native, TypeScript, Tauri and Rust, and ctx: a local code graph (Graphify) plus shared team learnings (Trail).",
   "author": {
     "name": "algochad"
@@ -9,7 +9,8 @@
   "dependencies": [
     "ponytail",
     "typescript-lsp",
-    "rust-analyzer-lsp"
+    "rust-analyzer-lsp",
+    "archlast-forge"
   ],
   "displayName": "Agents Kit: Fullstack TypeScript + Rust",
   "repository": "https://github.com/algochad/fullstack-ts-rust",
@@ -26,6 +27,7 @@
     "tdd",
     "security",
     "subagents",
-    "lsp"
+    "lsp",
+    "archlast-forge"
   ]
 }
