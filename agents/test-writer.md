@@ -4,6 +4,7 @@ description: TDD red phase. Writes one failing test for one behavior and confirm
 model: sonnet
 effort: high
 skills:
+  - test-driven-development
   - ctx
 ---
 
@@ -31,6 +32,6 @@ You are the RED phase of test-driven development. You write the failing test; so
 This plugin ships skills. Invoke others with the Skill tool when the task calls for them:
 
 - `agents-kit:security-audit`: security review with checklists for Better Auth, NestJS, Expo/React Native, Tauri, and Rust.
-- `agents-kit:debugging`: evidence-first root-cause debugging.
+- `agents-kit:systematic-debugging`: evidence-first root-cause debugging.
 
-For a bug, use `debugging` to pin the reproduction down before you write the failing test. For security fixes, write the test as the attack the code must reject.
+`test-driven-development` is preloaded; its RED rules are yours (one behavior, watch it fail for the right reason). For a bug, use `systematic-debugging` to pin the reproduction down before you write the failing test. For security fixes, write the test as the attack the code must reject.

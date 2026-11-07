@@ -32,10 +32,12 @@ Plugin agents are called `agents-kit:developer` and so on. Claude picks them fro
 
 `/agents-kit:tdd <feature or bug>` runs one behavior at a time through plan, red, green, and review, with a gate between phases so green never starts before red is confirmed. Each phase runs in its own context.
 
-`/agents-kit:review [PR | branch | path] [--comment]` runs a parallel review (bugs in the diff, problems that need context, rule violations), validates each candidate in a fresh agent, and reports only the findings that survive. It posts to GitHub only with `--comment`.
+`/agents-kit:code-review [PR | branch] [--comment]` is Anthropic's `code-review` command: parallel reviewers (bugs in the diff, problems that need context, rule violations) whose candidates are each validated in a fresh agent, so only high-signal findings survive. It posts to GitHub only with `--comment`. Here the reviewers are `agents-kit:reviewer` agents and also run `ctx impact` and `trail check`.
 
 ### Skills
 
+- **Superpowers skills** (obra/superpowers v7.0.2, MIT, vendored in full, namespaced `agents-kit:`): `brainstorming`, `writing-plans`, `executing-plans`, `subagent-driven-development`, `dispatching-parallel-agents`, `test-driven-development`, `systematic-debugging`, `verification-before-completion`, `requesting-code-review`, `receiving-code-review`, `using-git-worktrees`, `finishing-a-development-branch`, `writing-skills`, and `using-superpowers`, which a SessionStart hook injects so skills are checked before any response. Left out: `diagnosing-superpowers` (it files issues against the upstream project) and the other harnesses' tool notes.
+- **`frontend-design`** is Anthropic's skill, vendored in full (Apache-2.0), with an appended section for this plugin: the project's design system counts as part of the brief, stack notes for React, Expo and Tauri, and rendering checks through the bundled headless Playwright server.
 - **`security-audit`** finds exploitable vulnerabilities, verifies each one, and reports only high-confidence findings.
   - Method: diff-focused scope, project context research, source-to-sink tracing, per-finding verification, false-positive exclusions, variant search, confidence-scored report.
   - Stack checklists (`references/stacks/`):
@@ -44,14 +46,11 @@ Plugin agents are called `agents-kit:developer` and so on. Claude picks them fro
     - **React Native and Expo:** secrets in the bundle, SecureStore vs AsyncStorage, PKCE, deep links, TLS, WebViews, OTA updates.
     - **Tauri:** capabilities and permissions, scopes, `#[tauri::command]` input handling, CSP, updater, keychain storage.
     - **Rust:** `unsafe` and FFI, panics, integer overflow and casts, injection and path traversal, crypto, `cargo audit` and `cargo deny`.
-- **`debugging`** is evidence-first root-cause debugging: reproduce, trace backward, one hypothesis at a time, fix once, add a regression test. After three failed fixes it stops and questions the design. It includes starting points for NestJS, Better Auth, Expo, Tauri, and Rust.
+- **`ctx`** is the front door to the code graph and team memory (below).
 
-- **`code-review`** reviews a diff, branch or PR for bugs, broken callers, security problems and violations of the repo's own `CLAUDE.md` / `AGENTS.md`. Every candidate is verified and confidence-scored, and only findings at 80 or above are reported, with what was and wasn't checked. It also covers acting on review feedback you receive (verify before you agree).
-- **`frontend-design`** guides UI work in React web, Expo/React Native and Tauri: follow the project's design system first, ground the look in the product and its users, plan tokens and layout before markup, avoid templated defaults, design empty/loading/error states, write real copy, and check a real render. Platform notes for each stack.
-- **`verification`** is evidence before claims: run the command that proves it, read the output, then say it. Preloaded in the `developer`.
-- **`planning`** settles what to build and why, lays out approaches, and writes small steps with exact files and the test for each. Preloaded in the `architect`.
+**How the parts fit.** `using-superpowers` is the entry point and lists every skill; process skills run first, then `ctx` to find code, then domain skills. Superpowers' subagent templates dispatch this plugin's `developer` (implementer), `reviewer` and `architect` instead of `general-purpose`. `/agents-kit:tdd` is the same red-green-refactor loop split across `test-writer`, `developer` and `reviewer`. The vendored text is unchanged except for marked "In agents-kit" sections, the renamed namespace, `--open` removed from the brainstorming visual companion (it would launch a window), and the subagent templates. One confidence scale (0 to 100, report 80+) and one severity scale (high, medium, low) are used by `reviewer`, `/agents-kit:code-review` and `security-audit`. Specs and plans are saved where upstream saves them (`docs/superpowers/`). If you install the original `superpowers`, `frontend-design` or `code-review` plugins as well, you will have two copies of each.
 
-They load automatically when relevant, or run them by name, e.g. `/agents-kit:security-audit`. The `ctx`, `graphify` and `trail` skills (the last two are the tools' own, unmodified apart from the fork changes) cover the code graph and team memory below.
+They load automatically when relevant, or run them by name, e.g. `/agents-kit:security-audit`.
 
 ### ctx: code graph + team memory
 
@@ -70,7 +69,7 @@ ctx learn --title ... -m ...     # save a learning (the main agent does this, af
 ctx status
 ```
 
-`/agents-kit:ctx-init` runs the first one for you. All subagents know `ctx`; `Explore` and `general-purpose` try it before grepping. The upstream `graphify` and `trail` commands are also on `PATH` while the plugin is enabled.
+`/agents-kit:ctx-init` runs the first one for you. All subagents know `ctx`; `Explore` and `general-purpose` try it before grepping. The forks' `graphify` and `trail` commands are also on `PATH` while the plugin is enabled.
 
 **What the forks change, and what they never do**
 - No telemetry, update checks, cloud workspace, or model calls. The Graphify model passes are off (`GRAPHIFY_BACKEND=none`) unless you set `AGENTS_KIT_ALLOW_LLM=1`.
@@ -82,9 +81,18 @@ ctx status
 
 **Install details.** `scripts/install-tools.js` runs at session start. If the pinned commits in `tools.json` are not built yet, it starts one detached worker (git, `npm ci && npm run build`, a Python venv and `pip install`) in `${CLAUDE_PLUGIN_DATA}` and returns, so the session never waits; progress is in `install.log` there. It needs `git`, Node 20.16+ or 22.3+, and Python 3.10+ on `PATH`. Until it finishes `ctx` says so and agents carry on without it. A failed install retries at the next session start. Updating the plugin to a version with new pins rebuilds them.
 
-### Bundled dependency
+### Bundled Playwright browser
 
-The plugin depends on [ponytail](https://github.com/DietrichGebert/ponytail) (MIT), a "smallest change that works" mode, and installs it automatically. It is listed in this repo's marketplace so a single install pulls it in.
+`.mcp.json` registers Microsoft's [Playwright MCP](https://github.com/microsoft/playwright-mcp) (Apache-2.0), the same server as Anthropic's official `playwright` plugin, pinned to an exact version and started as `npx -y @playwright/mcp@0.0.83 --headless --isolated`. Headless means no window ever opens on your desktop; isolated means an in-memory profile with no saved logins or cookies. It reads `http(s)` URLs only (`file:` is blocked by the server), so serve the app first. Its tools appear as `mcp__plugin_agents-kit_playwright__*`; add that pattern to your allow list to skip per-tool prompts. It needs Node and a browser: if Chromium or Chrome is not installed, the server has an install tool. Don't also install Anthropic's separate `playwright` plugin, or you will have two servers. Bump the pin in `.mcp.json` deliberately; it is not `@latest` on purpose.
+
+### Bundled dependencies
+
+The plugin depends on three other plugins and installs them automatically. All are listed in this repo's marketplace, so one install pulls them in:
+
+- [ponytail](https://github.com/DietrichGebert/ponytail) (MIT): a "smallest change that works" mode.
+- **typescript-lsp** and **rust-analyzer-lsp**, Anthropic's official language-server plugins from [claude-plugins-official](https://github.com/anthropics/claude-plugins-official), pinned to a commit. They give Claude go-to-definition, references, hover and diagnostics for TypeScript/JavaScript and Rust. Plugins can't install language servers, so you need the binaries on `PATH`: `npm i -g typescript typescript-language-server` and `rustup component add rust-analyzer`. A session-start line tells you when one is missing in a project that uses that language, and stays silent otherwise.
+
+If you already installed any of these from another marketplace, uninstall that copy, or you will have two.
 
 ## Install
 
@@ -95,12 +103,10 @@ The plugin depends on [ponytail](https://github.com/DietrichGebert/ponytail) (MI
 
 Restart Claude Code afterwards. To try it from a local checkout: `claude --plugin-dir /path/to/fullstack-ts-rust`.
 
-If you already installed ponytail from its own marketplace, uninstall that copy first (`claude plugin uninstall ponytail@ponytail`), or you will have two.
-
 ## Requirements
 
 - **Node** on `PATH` for the hooks (see Notes). For `ctx`: also `git` and Python 3.10+, and network on the first session for the clone and `pip`.
-- For the developer agent's UI smoke tests, any one of: the project's own e2e setup, Claude's built-in browser tools (no install needed, when available), or Playwright. Without any, the agent reports what it couldn't verify.
+- For the developer agent's UI smoke tests, in this order: the project's own e2e setup, Claude's built-in browser tools (when available), the bundled Playwright server (below), or a headless Playwright script. Without any, the agent reports what it couldn't verify.
 - Smoke tests run headless or in Claude's own browser pane. The agent will not use Claude in Chrome or computer use unless you explicitly ask, because they take over your real browser or desktop. Expo device or simulator runs and Tauri windows are not launched.
 
 ## Notes
@@ -118,8 +124,10 @@ Separate contexts per TDD phase, phase gates, fresh-context review, few agents w
 
 ## Credits
 
-The skills are rewritten, not copied, from ideas in [anthropics/claude-code-security-review](https://github.com/anthropics/claude-code-security-review) (MIT), [trailofbits/skills](https://github.com/trailofbits/skills) (CC-BY-SA-4.0; fp-check and variant-analysis), [obra/superpowers](https://github.com/obra/superpowers) (MIT; systematic-debugging, verification-before-completion, brainstorming, writing-plans, requesting and receiving code review), and Anthropic's official `frontend-design` and `code-review` (Apache-2.0, from [anthropics/skills](https://github.com/anthropics/skills) and [claude-plugins-official](https://github.com/anthropics/claude-plugins-official)). Stack checklists summarize the official Better Auth, NestJS, Tauri, Expo, and React Native security documentation.
+**Vendored (in full, with modifications marked in the files):** [obra/superpowers](https://github.com/obra/superpowers) v7.0.2 at 22f0b46 (MIT, `licenses/superpowers-MIT.txt`); Anthropic's `frontend-design` skill and `code-review` command from [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) at 0412be7 (Apache-2.0, `licenses/anthropic-*-Apache-2.0.txt`, `skills/frontend-design/LICENSE.txt`). Modified by algochad; not endorsed by their authors.
 
-ctx bundles forks of [Graphify](https://github.com/Graphify-Labs/graphify) (Apache-2.0, with portions MIT; modified by algochad, see `licenses/graphify-NOTICE.txt`) and [Trail-Code](https://github.com/trailhq/Trail-Code) (MIT). Their licenses are in `licenses/`; their skills are shipped under `skills/graphify` and `skills/trail`. They are not affiliated with this plugin or endorsing it.
+**Written for this plugin, informed by:** the security-audit skill draws on [anthropics/claude-code-security-review](https://github.com/anthropics/claude-code-security-review) (MIT) and [trailofbits/skills](https://github.com/trailofbits/skills) (CC-BY-SA-4.0; fp-check and variant-analysis); the stack checklists summarize the official Better Auth, NestJS, Tauri, Expo and React Native security documentation.
+
+ctx bundles forks of [Graphify](https://github.com/Graphify-Labs/graphify) (Apache-2.0, with portions MIT; modified by algochad, see `licenses/graphify-NOTICE.txt`) and [Trail-Code](https://github.com/trailhq/Trail-Code) (MIT). Their licenses are in `licenses/`; their guidance is rewritten into `skills/ctx/references/`, not shipped as separate skills (the originals told agents to install the upstream packages and register their own hooks, which conflicts with this plugin). They are not affiliated with this plugin or endorsing it.
 
 This plugin is MIT licensed.

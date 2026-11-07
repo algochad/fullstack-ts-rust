@@ -142,6 +142,63 @@ test("gate: denies a code search until ctx is tried, then opens; subagents are s
   assert.strictEqual(bash("ls forge", { session_id: "s9" }), null, "inactive without ctx init");
 });
 
+test("cohesion: no part of the kit gives instructions that conflict with another", () => {
+  const files = [];
+  const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).forEach((e) => (e.isDirectory() ? walk(path.join(d, e.name)) : /\.md$/.test(e.name) && files.push(path.join(d, e.name))));
+  ["agents", "overrides", "commands", "skills"].forEach((d) => walk(path.join(root, d)));
+  const text = (f) => fs.readFileSync(f, "utf8");
+  // Things that would fight the plugin: installing upstream packages, wiring hooks, scripted reply endings, another confidence scale.
+  const banned = [/(^|[^-\w])superpowers:[a-z]/, /\/agents-kit:review(?![-\w])/, /agents-kit:(debugging|verification|planning)(?![-\w])/, /start-server\.sh[^\n]*--open/, /npm install -g/, /pip install graphifyy/, /graphify (hook|claude) install/, /trail init(?! --plugin)/, /word for word/, /close your reply with/i, /1 to 10/, /graft upgrade/];
+  for (const f of files) for (const re of banned) assert.doesNotMatch(text(f), re, `${path.relative(root, f)} matches ${re}`);
+  // Every skill an agent preloads or names as agents-kit:<x> exists, and has a matching folder with SKILL.md.
+  const skills = fs.readdirSync(path.join(root, "skills"));
+  for (const f of files) {
+    for (const m of text(f).matchAll(/agents-kit:([a-z-]+)/g)) assert.ok(skills.includes(m[1]) || fs.existsSync(path.join(root, "commands", m[1] + ".md")) || fs.existsSync(path.join(root, "agents", m[1] + ".md")), `${path.relative(root, f)} names agents-kit:${m[1]}`);
+    const fm = text(f).match(/^skills:\n((?:  - .*\n)+)/m);
+    if (fm) for (const n of fm[1].matchAll(/  - (\S+)/g)) assert.ok(skills.includes(n[1]), `${path.relative(root, f)} preloads missing skill ${n[1]}`);
+  }
+  for (const k of skills) assert.ok(fs.existsSync(path.join(root, "skills", k, "SKILL.md")), k);
+});
+
+test("every plugin dependency is listed in this repo's marketplace, and git sources are pinned to a full sha", () => {
+  const dep = JSON.parse(fs.readFileSync(path.join(root, ".claude-plugin", "plugin.json"), "utf8")).dependencies;
+  const mk = JSON.parse(fs.readFileSync(path.join(root, ".claude-plugin", "marketplace.json"), "utf8")).plugins;
+  for (const d of dep) assert.ok(mk.some((p) => p.name === d), `${d} missing from marketplace.json`);
+  for (const p of mk.filter((p) => p.source.source === "git-subdir")) assert.match(p.source.sha, /^[0-9a-f]{40}$/, p.name);
+});
+
+test("every markdown file is well-formed: valid frontmatter, balanced fences, no dead relative links", () => {
+  const all = [];
+  const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).forEach((e) => { if (e.name === "node_modules" || e.name === ".git") return; e.isDirectory() ? walk(path.join(d, e.name)) : /\.md$/.test(e.name) && all.push(path.join(d, e.name)); });
+  walk(root);
+  for (const f of all) {
+    const rel = path.relative(root, f), s = fs.readFileSync(f, "utf8");
+    assert.strictEqual((s.match(/^\s*(```|~~~)/gm) || []).length % 2, 0, `${rel}: unbalanced code fences`);
+    if (s.startsWith("---")) {
+      const m = s.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
+      assert.ok(m, `${rel}: frontmatter is not closed`);
+      // YAML has no parser in node core, so lint the three ways a hand-written value breaks: an unquoted ": " or " #", an unquoted
+      // flow start ([ or {) that is not a JSON array, and a leading indicator character.
+      let inBlock = false;
+      for (const line of m[1].split(/\r?\n/)) {
+        const kv = line.match(/^([A-Za-z][\w-]*):\s*(.*)$/);
+        if (!kv) continue;
+        const v = kv[2].trim();
+        inBlock = /^[|>][+-]?$/.test(v);
+        if (inBlock || v === "" || /^["']/.test(v)) continue;
+        assert.doesNotMatch(v, /: |\s#/, `${rel}: ${kv[1]} needs quotes (contains ": " or " #")`);
+        assert.doesNotMatch(v, /^[*&!%@`]/, `${rel}: ${kv[1]} starts with a YAML indicator, quote it`);
+        if (/^[\[{]/.test(v)) assert.doesNotThrow(() => JSON.parse(v), `${rel}: ${kv[1]} starts with [ or { but is not valid JSON, quote it`);
+      }
+    }
+    const body = s.replace(/```[\s\S]*?```/g, "");
+    for (const m of body.matchAll(/\]\(([^)\s#]+)(#[^)]*)?\)/g)) {
+      if (/^(https?:|mailto:|\/)/.test(m[1])) continue;
+      assert.ok(fs.existsSync(path.join(path.dirname(f), m[1])), `${rel}: dead link ${m[1]}`);
+    }
+  }
+});
+
 test("every hook script exists and tools.json pins full commits", () => {
   const h = JSON.parse(fs.readFileSync(path.join(root, "hooks", "hooks.json"), "utf8")).hooks;
   for (const g of Object.values(h).flat()) for (const x of g.hooks) {

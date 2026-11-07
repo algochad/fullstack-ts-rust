@@ -1,13 +1,15 @@
 {
   "name": "agents-kit",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "Fullstack agent kit for TypeScript web and backend (React, NestJS, Better Auth), React Native with Expo, Tauri desktop and mobile, and Rust. Tiered Opus/Sonnet/Haiku subagents, a TDD pipeline, debugging, security-audit, code-review, frontend-design, verification and planning skills, and ctx: a local code graph (Graphify) plus shared team learnings (Trail).",
   "author": {
     "name": "algochad"
   },
   "license": "MIT",
   "dependencies": [
-    "ponytail"
+    "ponytail",
+    "typescript-lsp",
+    "rust-analyzer-lsp"
   ],
   "displayName": "Agents Kit: Fullstack TypeScript + Rust",
   "repository": "https://github.com/algochad/fullstack-ts-rust",
@@ -23,6 +25,7 @@
     "tauri",
     "tdd",
     "security",
-    "subagents"
+    "subagents",
+    "lsp"
   ]
 }

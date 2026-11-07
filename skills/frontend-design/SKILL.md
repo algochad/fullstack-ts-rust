@@ -1,57 +1,81 @@
 ---
 name: frontend-design
-description: Visual and interaction design for UI you build or reshape, in React web, React Native with Expo, and Tauri desktop or mobile. Use when creating a page, screen, component or flow, or restyling one, so the result fits the product and its users instead of a generic template. Covers following an existing design system, choosing a direction, type, color, layout, motion, copy, states, accessibility, and checking the result in a real render.
+description: Guidance for distinctive, intentional visual design when building new UI or reshaping an existing one. Helps with aesthetic direction, typography, and making choices that don't read as templated defaults.
+license: Complete terms in LICENSE.txt
 ---
 
-# Frontend design
+# Frontend Design
 
-Make choices for this product and these users, not the defaults you would produce for any similar page. Ideas adapted and reworded from Anthropic's `frontend-design` skill (Apache-2.0); stack notes are this plugin's.
+Approach this as the design lead at a design studio known for giving every client a distinct visual identity that is not mistaken for anyone else's. This client has already rejected proposals that felt cliché or templated, and is paying for a distinctive point of view: make deliberate, opinionated choices about palette, typography, and layout that are specific to this brief, and take aesthetic risk if justified.
 
-## 1. Existing project: its system wins
+## Ground your designs in the subject matter
 
-Before designing anything, look at what the project already has: component library (`components/ui`, shadcn, Tamagui, NativeWind, a theme file), tokens, spacing and type scale, icon set, existing screens. A change in an existing product matches it. Reuse its components and tokens, and extend them only when nothing fits. Everything below is for new surfaces or a brief that asks for a fresh look. The brief's own words always beat these defaults.
+If the brief does not identify what the product or subject matter is, identify it yourself before designing, and confirm with the client. You can come up with one concrete subject, the design's audience, and the design's primary job, as a proposal. If there's any information in your memory about the client's preferences or context about what they're building, use that as a hint. The subject's industry, subject matter, materials, and vernacular are where distinctive visual choices come from — a design for a toy for girls aged 8–11 will be very aesthetically different from a dashboard for financial analysts. Build with the brief's real content and subject matter throughout.
 
-## 2. Ground it in the subject
+## Design principles
 
-State, in a line each: what the product is, who uses it, and the primary job of this screen. If the brief doesn't say, propose them and confirm. A clinic ledger, a trading tool, a kids' game and a field-service app should not look alike. Draw materials, vocabulary and density from the subject (a ledger is dense, tabular and calm; a consumer onboarding is spacious and warm).
+For web designs, the hero is the first thing viewers will see. Open with the most characteristic thing in the subject's world, in the form that is most appropriate: a headline, an image, an animation, a live demo, an interactive moment, or other treatments. Be deliberate with your choice: a big number with a small label, supporting stats, and a gradient accent is the default treatment, so only use it if that's truly the best option.
 
-## 3. Plan before you build (two passes)
+Typography carries the personality of the page. You don't need a different typeface for display or headline text and body content: use one family or two, and if two, make them clearly distinct.
 
-Write a compact plan, then critique it against the brief, then build.
-- **Color:** 4 to 6 named hex values (background, surface, text, one accent, state colors). Check contrast of text on every surface (4.5:1 body, 3:1 large text and UI).
-- **Type:** one family or two that are clearly different, a defined scale, weights with a job. Line length under about 80 characters.
-- **Layout:** one sentence of concept plus an ASCII wireframe; say how content aligns.
-- **One memorable thing:** spend the boldness in one place and keep the rest quiet.
+Choose your typefaces deliberately, not the default families you would reach for on any other project, and set a clear type scale following the default guidance of The Elements of Typographic Style with intentional weights, widths, and spacing. When type is used as a headline or visual element, use the type treatment itself as an active part of the design, not a neutral delivery vehicle for the content.
 
-Then ask: would this plan come out the same for any similar prompt? Where it would, change that part and say what you changed.
+Default to line lengths of less than 80 characters. Serif typefaces can have slightly longer line lengths; give serif body text slightly more line-height than a sans-serif.
 
-## 4. Defaults that read as templated
+Avoid these default typographic treatments; they are the commonest tells of a generated page:
+- Accenting just a single word or phrase in a headline, like putting one word in italic/bold or a different color.
+- Using all caps for labels.
+- Adding unnecessary typographic labels above content.
 
-Treat these as choices to justify, not starting points:
-- Cream background with a high-contrast serif and a terracotta accent; near-black with one acid accent; hairline broadsheet columns with zero radius.
-- The card kit: everything in identical rounded cards, one radius and one grey shadow everywhere, gradient washes as decoration.
-- Chrome that appears whatever the subject: an ALL-CAPS tracked eyebrow above every heading, `A · B · C` meta strings, `→` on every link, numbered `01 / 02 / 03` markers on content that is not a sequence, one word of a headline in a different color.
-- Fade-and-slide-up on every section and hover motion on every card. Use unprompted motion once, for one moment; motion that answers a person's action is fine.
-- A big number, small label and gradient accent as the hero.
+Visual structure is information. Structural devices like outlines, borders, numbering, eyebrows, dividers, labels, etc., encode useful information about the content rather than decorate it. Many generic designs use numbered markers (01 / 02 / 03), but that's only appropriate if the content actually is a sequence — like a stepped process or a timeline. Before adding numbered markers, check the content really is a sequence.
 
-## 5. Stack notes
+Use non-user-triggered motion sparingly and deliberately, only to draw attention. A single orchestrated moment — one page-load sequence or one reveal — lands better than scattered effects; fade-and-slide-up entrances on each section and hover transitions on every card are the generic default and read as AI-generated. Motion that answers a person's action (opening, expanding, confirming) is welcome when it shows what changed.
 
-- **React web (Tailwind, shadcn and similar):** the library's look is the default, so make a deliberate decision about radius, density and color rather than shipping it as-is. Build responsive from the narrow width up; check keyboard focus, `prefers-reduced-motion` and `prefers-color-scheme`.
-- **React Native / Expo:** follow platform conventions (back gesture, sheets, native pickers) unless the brief says otherwise. Respect safe areas and the keyboard, touch targets of at least 44x44 pt, dynamic type, and both light and dark. Use `FlatList` for long lists, not `ScrollView`. Animate with the native driver or Reanimated, not layout in JS.
-- **Tauri desktop:** desktop is denser than mobile and expects keyboard use: tab order, shortcuts, menus, resizable windows, and a sensible minimum size. Mind window chrome and drag regions. Mobile Tauri follows the React Native points above. Don't invent new patterns for file, window or system dialogs; use the platform's.
+Consider written content carefully. Often a design brief may not contain real content, and it's up to you to come up with copy and placeholder content. Copy can make a design feel as templated as the design itself. See the below section on writing for more guidance.
 
-## 6. Every screen has states
+## Process: plan, review against the brief, build, critique
 
-Design empty, loading, error, partial and long-content states, not only the happy path. An error says what happened and what to do, never apologizes vaguely. An empty screen invites the next action. Test with long names, 0 items, 1 item and 1000 items, and right-to-left or non-Latin text when the product could meet it.
+For calibration, AI-generated design right now clusters around some traits:
+1. a warm cream background (near #F4F1EA) with a high-contrast serif display and a terracotta or warm-clay accent (often near #D97757 — Anthropic's own Claude-interaction accent, so on a user's brief it reads as a tell);
+2. a near-black background with a single bright acid-green or vermilion accent;
+3. a broadsheet-style layout with hairline rules, zero border-radius, and dense newspaper-like columns;
+4. the SaaS-card kit: content chopped into identical rounded cards, one border-radius on everything regardless of hierarchy, the same soft grey shadow (rgba(0,0,0,.1)) under each, and gradient washes as decoration;
+5. template chrome that appears whatever the subject: a tracked-out ALL-CAPS eyebrow label above every heading; meta strings joined with middle dots ('A · B · C'); labels built as 'WORD — fragment' with a spaced em dash; tinted near-black (#0B0B0B, #111) standing in for black; a monospace face for small data labels; a '→' appended to link and button text.
 
-## 7. Words are design
+All traits are legitimate for some briefs, but they are defaults rather than choices, and they appear regardless of subject. Where the brief pins down a visual direction, follow it exactly — the brief's own words always win, including when it asks for one of these looks. Where it leaves an axis free, don't spend that freedom on one of these defaults. As with a hired human designer, there's often a careful balance between doing what you're good at and taking each project as a chance to experiment and learn.
 
-Name things by what the user understands, not how the system is built. Buttons say what happens ("Save changes", not "Submit") and the same action keeps its name through the flow. Sentence case, active voice, no filler. Don't write marketing copy into a tool.
+Work in two passes. First, brainstorm a short design plan based on the client's design brief: create a compact token system with color, type, layout, and principles.
+- Color: describe the core base palette as 4–6 named hex values.
+- Type: the typefaces and their roles.
+- Layout: a layout concept, using one-sentence prose descriptions and ASCII wireframes to ideate and compare. Include alignment guidance; should the content be left aligned, center aligned, justified?
+- Principles: the high-level guidance for what makes this page unique.
 
-## 8. Check it in a real render
+Then review that plan against the brief before building: if any part of it reads like the generic default you would produce for any similar page (work through a similar prompt to see if you arrive somewhere similar) rather than a choice made for this specific brief — revise that part, say what you changed and why. Only after you've confirmed the relative uniqueness of your design plan should you start to write the code, following the revised plan.
 
-Look at the result before calling it done: the project's e2e setup, Claude's built-in browser pane, or headless Playwright with screenshots at phone and desktop widths, in the order the `developer` agent already uses. Don't open Claude in Chrome or computer use unless asked. Expo device runs and Tauri windows are not launched; say what you could not see. Remove one decoration before you stop.
+When writing the code, be careful of structuring your CSS selector specificities. It's easy to generate CSS classes that cancel each other out (especially with a type-based selector like .section and an element-based selector like .cta). This can happen often with padding/margin between sections.
 
-## Quality floor, always
+## Restraint and self-critique
 
-Responsive to a narrow screen, visible keyboard focus, labels on inputs, alt text or accessible names, color never the only signal, reduced motion respected, no text on a busy image without a scrim, contrast met.
+Spend your boldness in one place. Let one element be the memorable thing, keep everything around it quiet and disciplined, and cut any decoration that does not serve the brief. Build to a quality floor without announcing it: responsive down to mobile, visible keyboard focus, reduced motion respected, visually accessible, harmonious color palettes. Critique your own work as you build, taking screenshots to review if your environment supports it — a picture is worth 1000 tokens. Consider Chanel's advice: before leaving the house, take a look in the mirror and remove one accessory. Human creatives have memory and always try to do something new, so if you have a space to quickly jot down notes about what you've tried, it can help you in future passes.
+
+## More on writing in design
+
+Words appear in a design for one reason: to make it easier to understand and use. They are design content, not decoration. Bring the same intentionality and minimalism to copywriting that you would bring to spacing and color. Before writing anything, ask what the design needs to say, and how it can best be said to help the person navigate the experience.
+
+Write from the end user's perspective. Name things by what users will understand in simple language, not by how the system is built. A user manages notifications, not webhook config. Describe what something is or does in plain terms rather than selling it. Being specific and legible to new users is always better than being clever.
+
+Use active voice as default. A CTA says exactly what happens when it is used: "Save changes," not "Submit." An action keeps the same name through the whole flow, so the button that says "Publish" produces a toast that says "Published." The vocabulary of an interface is the signposting for someone navigating the product. Cohesion and consistency are how people learn their way around.
+
+Treat failure and emptiness as moments for direction, not mood. Explain what went wrong and how to fix it, in the interface's voice rather than a person's. Errors don't apologize, and they are never vague about what happened. An empty screen is an invitation to act.
+
+Keep the tone conversational: plain verbs, sentence case, no filler, with tone matched to the brand and the audience. Let each written element do exactly one job.
+
+<!-- Modified by algochad for the agents-kit plugin: the section below was appended. Everything above is Anthropic's original (Apache-2.0, see LICENSE.txt). -->
+
+## In agents-kit
+
+- **An existing product's design system is part of the brief.** Before the two-pass plan, look at what the project already has (component library such as `components/ui`, shadcn, Tamagui or NativeWind, tokens, type and spacing scale, icon set, existing screens). A change inside an existing product matches it; the "distinct point of view" above is for a new surface or a brief that asks for a fresh look.
+- **Stack notes** for React web, React Native with Expo and Tauri (platform conventions, safe areas, touch targets, desktop density, keyboard use) are in [references/stacks.md](references/stacks.md). Read it for the stack you are building in.
+- **Check a real render** with the tools and in the order the `agents-kit:developer` agent uses for smoke tests: the project's e2e setup, Claude's built-in browser pane, then the bundled headless Playwright server (`mcp__plugin_agents-kit_playwright__*`, `http(s)` URLs only; serve the app first). Screenshot a phone width and a desktop width. Never open Claude in Chrome or computer use unless the user asked; Expo device runs and Tauri windows are not launched, so say what you could not see. "Taking screenshots to review" above means these.
+- **Subagents can't confirm the brief with the client.** Where this skill says to confirm, a subagent states its assumptions (subject, audience, primary job) at the top of its report.
+- **Design every state**: empty, loading, error, partial, and long content, not only the happy path.

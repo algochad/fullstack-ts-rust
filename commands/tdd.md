@@ -7,10 +7,10 @@ Implement this with the agents-kit TDD pipeline: $ARGUMENTS
 
 Run the phases in order, each in its own subagent. Do not start a phase until the previous gate passes. Finish one behavior completely before starting the next.
 
-1. **Plan (skip for small tasks):** `agents-kit:architect` settles intent and approaches (`planning` skill), then returns the steps and the first failing test for each. If the request leaves a design choice open, ask me before continuing.
+1. **Plan (skip for small tasks):** `agents-kit:architect` settles intent and approaches (`writing-plans` skill; I run `brainstorming` first when the request leaves the design open), then returns the steps and the first failing test for each. If the request leaves a design choice open, ask me before continuing.
 2. **Red:** `agents-kit:test-writer` writes one failing test. Gate: it reports the failure output and the failure is for the right reason.
-3. **Green:** `agents-kit:developer` implements the minimum to pass that test, and smoke tests headless if the change is frontend. Gate: the new test and the relevant suite pass, shown by output from this turn (`verification` skill).
-4. **Review:** `agents-kit:reviewer` reads the change and returns a ranked report of verified findings (`code-review` skill; `/agents-kit:review` runs the fuller parallel version). Fix anything high or medium, then re-run the tests.
+3. **Green:** `agents-kit:developer` implements the minimum to pass that test, and smoke tests headless if the change is frontend. Gate: the new test and the relevant suite pass, shown by output from this turn (`verification-before-completion` skill).
+4. **Review:** `agents-kit:reviewer` reads the change and returns a ranked report of verified findings (`/agents-kit:code-review` runs the fuller parallel PR review). Fix anything high or medium, then re-run the tests.
 5. Repeat from step 2 for the next behavior.
 
 Report to me: the plan, the tests added, the commands run with results, the reviewer's findings, and anything skipped or unverified. You decide which findings to act on; don't apply the reviewer's suggestions blindly.

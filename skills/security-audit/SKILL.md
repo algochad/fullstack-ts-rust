@@ -61,7 +61,7 @@ When a finding is confirmed, find its siblings. Write down the root cause (why t
 
 ## 8. Report
 
-Score each finding's confidence from 1 to 10. Report only 8 or higher; list 5 to 7 under "Needs a human look" in one line each. Report MEDIUM severity only if concrete and obvious.
+Score each finding's confidence from 0 to 100, the same scale `/agents-kit:code-review` uses. Report only 80 or higher; list 50 to 79 under "Needs a human look" in one line each. Report MEDIUM severity only if concrete and obvious.
 
 - **Verdict:** one line.
 - **Findings,** most severe first. Each one:

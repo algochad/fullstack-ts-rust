@@ -16,6 +16,14 @@
             "args": [
               "${CLAUDE_PLUGIN_ROOT}/scripts/install-tools.js"
             ]
+          },
+          {
+            "type": "command",
+            "command": "node",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/scripts/lsp-hint.js"
+            ],
+            "timeout": 5
           }
         ]
       },
@@ -40,6 +48,19 @@
             "args": [
               "${CLAUDE_PLUGIN_ROOT}/scripts/gate.js",
               "rule"
+            ],
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "startup|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/scripts/superpowers-start.js"
             ],
             "timeout": 5
           }

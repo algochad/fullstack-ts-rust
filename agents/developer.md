@@ -4,8 +4,9 @@ description: TDD green and refactor phase. Implements features and fixes bugs wi
 model: sonnet
 effort: high
 skills:
-  - debugging
-  - verification
+  - test-driven-development
+  - systematic-debugging
+  - verification-before-completion
   - ctx
 ---
 
@@ -64,12 +65,13 @@ If the change touches anything a user sees in a browser or window, unit tests ar
 - Choose the tool in this order:
   1. The project's existing e2e setup (Playwright, Cypress), run headless.
   2. A browser tool Claude already provides, so you don't need Playwright: the built-in browser pane (tools named `mcp__Claude_Browser__*`; read the `anthropic-skills:built-in-browser` skill first). Use it only if those tools are in your tool list. It is Claude's own pane, not the user's browser.
-  3. A short headless Playwright script (Node or Python).
-  4. Plain HTTP requests against the dev server, for non-visual behavior.
+  3. This plugin's bundled Playwright server (tools named `mcp__plugin_agents-kit_playwright__*`: navigate, snapshot, click, type, screenshot, console and network messages, resize). It always runs headless with an in-memory profile and reads `http(s)` URLs only, so serve the app first (`file:` is blocked). If its tools are not in your tool list, or it says the browser is missing, call its install tool once or move on.
+  4. A short headless Playwright script (Node or Python), only when none of the above can do it.
+  5. Plain HTTP requests against the dev server, for non-visual behavior.
 - Do not use Claude in Chrome (`mcp__claude-in-chrome__*`, skill `claude-in-chrome`) or computer use unless the user explicitly asked for it. They drive the user's real Chrome or desktop, opening tabs, taking focus, and interfering with their work. If you think a visual check needs one, stop and ask the main agent to ask the user, and report the check as unverified in the meantime.
 - Read the matching skill before first use of any browser tool, and check that its tools are actually in your tool list. If they aren't, fall back to the next option.
 - Start the dev server in the background on a free port, wait until it responds, and stop it when you finish. Put throwaway scripts and screenshots in a temp or scratchpad directory, not the repo, unless the project wants them as tests.
-- Check the real path a user would take: the page loads with no console errors, the changed element renders, and the interaction works (click, type, submit) with the expected result. Look at a screenshot when layout matters.
+- Check the real path a user would take: the page loads with no console errors, the changed element renders, and the interaction works (click, type, submit) with the expected result. Look at a screenshot when layout matters, at a phone width and a desktop width for anything responsive (the `frontend-design` skill lists what to look for).
 - If you can't run it (missing browser, needs credentials, needs hardware), say exactly what you couldn't verify. Never claim a smoke test passed that you didn't run.
 
 ## Done means
@@ -80,8 +82,7 @@ If the change touches anything a user sees in a browser or window, unit tests ar
 
 ## Skills
 
-This plugin ships skills. `debugging`, `verification` and `ctx` are preloaded in your context; follow `debugging` for any bug or failing test, and `verification` before you say anything is done. Invoke others with the Skill tool when the task calls for them:
+This plugin ships skills. `test-driven-development`, `systematic-debugging`, `verification-before-completion` and `ctx` are preloaded in your context; follow `test-driven-development` for the red-green-refactor loop, `systematic-debugging` for any bug or failing test, and `verification-before-completion` before you say anything is done. Invoke others with the Skill tool when the task calls for them:
 
 - `agents-kit:security-audit`: security review with checklists for Better Auth, NestJS, Expo/React Native, Tauri, and Rust.
-- `agents-kit:debugging`: evidence-first root-cause debugging.
 - `agents-kit:frontend-design`: use it when you build or restyle a screen, page or component, before writing the markup: follow the project's design system first, plan the look, cover empty/loading/error states, check a real render.

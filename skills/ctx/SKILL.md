@@ -22,7 +22,7 @@ The join is the file path. `ctx` does the join for you.
 | `ctx init` | one time per repo: build the graph (`graphify-out/`) and the learnings folder (`.trail/`). Needs no key. |
 | `ctx learn --title T -m BODY --touches a.ts,b.ts#fn` | save a learning (see below). |
 
-Add `--json` to `where` and `impact` for structured output. Underneath, `graphify path|explain|query|update` and `trail ask|callers|check|blast|skeleton` are on PATH too.
+Add `--json` to `where` and `impact` for structured output. `ctx` is the entry point; underneath, `graphify` and `trail` are on PATH for the cases in [references/code-map.md](references/code-map.md) (exhaustive grep, file skeletons, callers, paths, the architecture report). There is one rule for the whole plugin: **`ctx where` first, then those**; a hook enforces it.
 
 ## How to work with it
 
@@ -31,7 +31,7 @@ Add `--json` to `where` and `impact` for structured output. Underneath, `graphif
 3. `ctx impact` when done. Any "used by" file you did not look at is a place the change can break; check it or say you did not.
 4. If the graph says STALE, `graphify update .` refreshes it for code changes (no model needed). No graph and no `.trail/`: fall back to normal search and tell the user `ctx init` exists.
 
-## Learnings
+## Learnings (details in [references/learnings.md](references/learnings.md))
 
 Save one only when the work found something the code cannot tell the next person: a bug's cause after failed attempts, an approach dropped and why, a choice and why, or the user correcting how something is done here. A summary with the why, never a transcript, never a secret, never status or what the diff already shows. Subagents do not save learnings themselves: put a proposed title, body and `--touches` list in your report so the main agent can save it after the user agrees.
 

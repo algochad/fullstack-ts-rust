@@ -1,0 +1,9 @@
+# Stack-specific starting points (agents-kit)
+
+Written for this plugin; not part of the upstream skill. Use these as places to look in Phase 1 (root cause investigation), not as fixes.
+
+- **NestJS:** dependency-injection errors ("Nest can't resolve dependencies of X") mean a provider is missing from `providers`, a module isn't imported or exported, or there's a circular import (`forwardRef`). Guard and pipe order, and `ValidationPipe` options, explain many 400/401/403 surprises. Check the global guard and public-route decorators first. Run with `--debug` or add a logger to the guard.
+- **Better Auth:** 403 or "invalid origin" errors usually mean `trustedOrigins` or `baseURL` doesn't match the real origin (scheme, port, www, proxy). Missing sessions are often cookie attributes (`secure` on HTTP, `SameSite`, cross-domain), a Nest `bodyParser` left on, or a proxy dropping headers. Don't fix by disabling the origin or CSRF checks.
+- **React Native / Expo:** stale Metro cache (`npx expo start -c`), version mismatches (`npx expo-doctor`, `npx expo install --check`), native config that needs a prebuild or a new dev client, and release-only crashes (Hermes, minification, missing permissions). Read `adb logcat` or the Xcode device log for native errors.
+- **Tauri:** a command that silently fails from the frontend is usually a missing capability or permission (check `src-tauri/capabilities`), an argument-name mismatch (Rust `snake_case` vs JS `camelCase`), or a CSP block (see the webview devtools console). Rust-side output appears in the terminal running `tauri dev`.
+- **Rust:** `RUST_BACKTRACE=1` (or `full`) for panics. Borrow-checker errors usually point to a lifetime or ownership design problem, not a missing `clone()`. For async hangs, look for a `std::sync::Mutex` guard held across `.await` or a blocking call on the async runtime. Use `cargo test -- --nocapture`, `dbg!`, and `tracing`. For `unsafe` or FFI bugs, run Miri or a sanitizer.

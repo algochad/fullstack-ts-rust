@@ -32,7 +32,7 @@ const ready = (f) => fs.existsSync(f);
 
 // Graph-pass off by default: nothing here may call a model or the network on its own.
 function toolEnv(extra) {
-  return { ...process.env, DO_NOT_TRACK: "1", GRAPHIFY_BACKEND: process.env.AGENTS_KIT_ALLOW_LLM ? process.env.GRAPHIFY_BACKEND || "" : "none", ...extra };
+  return { ...process.env, DO_NOT_TRACK: "1", TRAIL_PLUGIN: "1", GRAPHIFY_BACKEND: process.env.AGENTS_KIT_ALLOW_LLM ? process.env.GRAPHIFY_BACKEND || "" : "none", ...extra };
 }
 function trailCmd(args) {
   const e = trailEntry();

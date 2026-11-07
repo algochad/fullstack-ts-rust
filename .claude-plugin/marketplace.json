@@ -16,6 +16,28 @@
         "repo": "DietrichGebert/ponytail"
       },
       "description": "Lazy senior dev mode (third-party, MIT), required by agents-kit."
+    },
+    {
+      "name": "typescript-lsp",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/anthropics/claude-plugins-official.git",
+        "path": "plugins/typescript-lsp",
+        "ref": "main",
+        "sha": "0412be76f50ab4f4f8abff3753efa9269fbbca5b"
+      },
+      "description": "TypeScript and JavaScript language server (Anthropic, from claude-plugins-official), required by agents-kit."
+    },
+    {
+      "name": "rust-analyzer-lsp",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/anthropics/claude-plugins-official.git",
+        "path": "plugins/rust-analyzer-lsp",
+        "ref": "main",
+        "sha": "0412be76f50ab4f4f8abff3753efa9269fbbca5b"
+      },
+      "description": "Rust language server (Anthropic, from claude-plugins-official), required by agents-kit."
     }
   ],
   "description": "Fullstack TypeScript and Rust agent kit: web, backend, mobile (Expo), desktop and mobile (Tauri)."
