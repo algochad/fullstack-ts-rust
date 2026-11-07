@@ -32,7 +32,7 @@ You are the RED phase of test-driven development. You write the failing test; so
 This plugin ships skills. Invoke others with the Skill tool when the task calls for them:
 
 - `agents-kit:security-audit`: security review with checklists for Better Auth, NestJS, Expo/React Native, Tauri, and Rust.
-- `archlast-forge:archlast-forge`: in an archlast-forge project, tests use `createTestBackend` as its `references/testing.md` says.
+- `agents-kit:archlast-forge`: in an archlast-forge project, tests use `createTestBackend` as its `references/testing.md` says.
 - `agents-kit:nestjs`: its testing section says how to build the testing module, what to override, and to test guards by request.
 - `agents-kit:react`, `agents-kit:tauri`, `agents-kit:rust`, `agents-kit:typescript`: each has a testing section (Testing Library by user-visible behavior; `mockIPC` and `tauri::test`; unit, integration, doc and property tests; type-level tests). Use the one for the code under test.
 - `agents-kit:systematic-debugging`: evidence-first root-cause debugging.

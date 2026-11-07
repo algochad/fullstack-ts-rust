@@ -248,8 +248,25 @@ test("forge-hint speaks only inside an archlast-forge project", () => {
   const run = (cwd, event) => spawnSync(process.execPath, [path.join(root, "scripts", "forge-hint.js")], { input: JSON.stringify({ cwd, hook_event_name: event }), encoding: "utf8" }).stdout;
   const o = JSON.parse(run(proj, "SubagentStart"));
   assert.strictEqual(o.hookSpecificOutput.hookEventName, "SubagentStart");
-  assert.match(o.hookSpecificOutput.additionalContext, /archlast-forge:archlast-forge/);
+  assert.match(o.hookSpecificOutput.additionalContext, /agents-kit:archlast-forge/);
   assert.strictEqual(run(plain, "SessionStart"), "", "silent in other projects");
+});
+
+test("subagent models fit the job and effort never exceeds high; the guard refuses more", () => {
+  const read = (f) => fs.readFileSync(path.join(root, f), "utf8");
+  const fm = (f, k) => (read(f).match(new RegExp(`^${k}:\\s*(\\S+)`, "m")) || [])[1];
+  for (const f of ["agents/architect.md", "agents/developer.md", "agents/reviewer.md", "agents/test-writer.md", "overrides/Explore.md", "overrides/general-purpose.md"]) {
+    assert.ok(["low", "medium", "high"].includes(fm(f, "effort")), `${f}: effort must be low, medium or high`);
+    assert.ok(["opus", "sonnet", "haiku"].includes(fm(f, "model")), `${f}: model`);
+  }
+  assert.strictEqual(fm("agents/architect.md", "model"), "opus", "planning is the work worth Opus");
+  assert.strictEqual(fm("overrides/Explore.md", "model"), "haiku", "read-only search is the work for Haiku");
+  assert.notStrictEqual(fm("agents/reviewer.md", "model"), "haiku", "judging real bugs needs more than Haiku");
+  const guard = (input) => spawnSync(process.execPath, [path.join(root, "scripts", "agent-guard.js")], { input: JSON.stringify({ tool_input: input }), encoding: "utf8" }).stdout;
+  for (const effort of ["max", "xhigh", "higher"]) assert.match(JSON.parse(guard({ subagent_type: "agents-kit:developer", effort })).hookSpecificOutput.permissionDecision, /deny/, effort);
+  for (const input of [{ effort: "high" }, { effort: "low" }, { effort: "lower" }, { model: "opus" }, { model: "haiku", effort: "medium" }, {}]) assert.strictEqual(guard(input), "", JSON.stringify(input));
+  const hooks = JSON.parse(read("hooks/hooks.json")).hooks.PreToolUse;
+  assert.ok(hooks.some((g) => /Agent/.test(g.matcher || "") && g.hooks.some((h) => h.args[0].endsWith("agent-guard.js"))), "guard is registered on the Agent tool");
 });
 
 test("every hook script exists and tools.json pins full commits", () => {

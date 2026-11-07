@@ -114,7 +114,7 @@ No issues found. Checked for bugs and CLAUDE.md compliance.
 
 ## In agents-kit
 
-- **Agent type:** for steps 4 and 5 (the reviewers and the validators), launch `agents-kit:reviewer` (read-only, fresh context) as the agent type, with the `model` each step names. Its default is Haiku; the steps ask for Sonnet and Opus, so pass `model` explicitly. The lookups in steps 1 to 3 can be any lightweight agent. Only you, the main agent, post to GitHub, and only with `--comment`.
+- **Agent type:** for steps 4 and 5 (the reviewers and the validators), launch `agents-kit:reviewer` (read-only, fresh context) as the agent type, with the `model` each step names. Its default is Sonnet; step 4 asks for Opus on the bug agents, so pass `model` explicitly there. The lookups in steps 1 to 3 can be any lightweight agent. Only you, the main agent, post to GitHub, and only with `--comment`.
 - **Extra context for the reviewers:** tell each one to run `ctx impact` on the changed files when `graphify-out/` exists (a "used by" file the diff did not touch is where breakage hides) and `trail check` when `.trail/` exists (a contradicted team learning is a finding). For a PR touching auth, input handling, secrets, files, IPC or dependencies, have the Opus agent in step 4 also apply `agents-kit:security-audit`.
 - **One scale:** confidence is 0 to 100 and only validated, high-signal findings survive step 6, the same bar `agents-kit:reviewer` and `agents-kit:security-audit` use.
 - **Report shape:** in step 7, list findings ranked with severity (high, medium, low), `path:line`, the evidence, and the fix, and end with what was and was not checked.

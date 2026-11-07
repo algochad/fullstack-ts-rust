@@ -11,7 +11,7 @@ function isForgeProject(dir) {
 }
 
 const TEXT =
-  "This is an archlast-forge project (archlast-forge.json). Before you create, change or review code here, load the `archlast-forge:archlast-forge` skill: " +
+  "This is an archlast-forge project (archlast-forge.json). Before you create, change or review code here, load the `agents-kit:archlast-forge` skill: " +
   "its conventions are mandatory and beat the generic NestJS, React, TypeScript, frontend-design and security guidance wherever they differ " +
   "(for example Nest imports come from `@archlast/forge-runtime/nest`, never `@nestjs/*`). The generic skills still cover what it does not decide. " +
   "Do not edit `forge/_generated/`. A subagent cannot ask the user, so it reports the destructive commands that skill lists instead of running them.";

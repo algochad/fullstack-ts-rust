@@ -1,6 +1,6 @@
 # NestJS
 
-In an archlast-forge project (`archlast-forge.json`) the engine supplies security headers, the WAF and request validation, and `archlast-forge:archlast-forge` says which are built in: do not report their absence as findings, and do not suggest adding helmet, a custom validation pipe or auth wrappers; review what the project adds on top. This is the security checklist. For how to build, structure, test and debug NestJS code, and for what changed in Nest 11 and 12, use the `agents-kit:nestjs` skill; its review checklist covers non-security review.
+In an archlast-forge project (`archlast-forge.json`) the engine supplies security headers, the WAF and request validation, and `agents-kit:archlast-forge` says which are built in: do not report their absence as findings, and do not suggest adding helmet, a custom validation pipe or auth wrappers; review what the project adds on top. This is the security checklist. For how to build, structure, test and debug NestJS code, and for what changed in Nest 11 and 12, use the `agents-kit:nestjs` skill; its review checklist covers non-security review.
 
 Audit checklist for NestJS backends, from the NestJS security docs (authentication, helmet, CORS, CSRF, rate limiting) plus common Nest pitfalls. Newer Nest versions (12.1+) add built-ins such as `app.useSecurityHeaders()` and `app.enableCsrfProtection()`; older ones use `helmet`, `csurf` alternatives, and `@nestjs/throttler`. Check which version the project is on.
 

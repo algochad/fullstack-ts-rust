@@ -81,7 +81,7 @@ If the change touches anything a user sees in a browser or window, unit tests ar
 
 This plugin ships skills. `test-driven-development`, `systematic-debugging`, `verification-before-completion` and `ctx` are preloaded in your context; follow `test-driven-development` for the red-green-refactor loop, `systematic-debugging` for any bug or failing test, and `verification-before-completion` before you say anything is done. Invoke others with the Skill tool when the task calls for them:
 
-- `archlast-forge:archlast-forge`: in an archlast-forge project (`archlast-forge.json` at the root) read it before any change; its conventions beat the generic `nestjs`, `react`, `typescript` and security guidance where they differ. Do not run the destructive commands it lists (you cannot ask); report them.
+- `agents-kit:archlast-forge`: in an archlast-forge project (`archlast-forge.json` at the root) read it before any change; its conventions beat the generic `nestjs`, `react`, `typescript` and security guidance where they differ. Do not run the destructive commands it lists (you cannot ask); report them.
 - `agents-kit:nestjs`: read it before you add or change a NestJS module, controller, provider, guard, pipe, interceptor or filter, or when "Nest can't resolve dependencies" appears; it also says what differs on Nest 11 and 12.
 - `agents-kit:typescript`: tsconfig strictness, type design, validating data at trust boundaries, ESM and tooling; read it before you change type-level code or tsconfig.
 - `agents-kit:expo-overview`: read it before you build or change an Expo or React Native app (navigation, native UI, data fetching, project layout); it tells you which leaf skill to load. Nothing it says overrides the no-devices, no-windows rule.

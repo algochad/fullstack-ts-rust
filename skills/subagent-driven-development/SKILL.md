@@ -141,7 +141,7 @@ ledger.
 
 Use the least powerful model that can handle each role to conserve cost and increase speed.
 
-**In agents-kit:** the roles are already tiered, so a dispatch that names the agent and omits `model` gets the tier below: `agents-kit:developer` Sonnet, `agents-kit:reviewer` Haiku, `agents-kit:architect` Opus. Pass `model` only to move a task up or down a tier by the rules that follow (for example Opus for a subtle concurrency review or fix-loop escalation). The effort level stays the agent's own.
+**In agents-kit:** the roles are already tiered, so a dispatch that names the agent and omits `model` gets the tier below: `agents-kit:developer` Sonnet, `agents-kit:reviewer` Sonnet, `agents-kit:architect` Opus. Pass `model` only to move a task up or down a tier by the rules that follow (for example Opus for a subtle concurrency review or fix-loop escalation). The effort level stays the agent's own.
 
 **Mechanical implementation tasks** (isolated functions, clear specs, 1-2 files): use a fast, cheap model. Most implementation tasks are mechanical when the plan is well-specified.
 

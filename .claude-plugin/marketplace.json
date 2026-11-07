@@ -38,14 +38,6 @@
         "sha": "0412be76f50ab4f4f8abff3753efa9269fbbca5b"
       },
       "description": "Rust language server (Anthropic, from claude-plugins-official), required by agents-kit."
-    },
-    {
-      "name": "archlast-forge",
-      "source": {
-        "source": "github",
-        "repo": "algochad/archlast-forge-skills"
-      },
-      "description": "The archlast-forge agent skill (own repository, MIT); only relevant inside an archlast-forge project. Required by agents-kit."
     }
   ],
   "description": "Fullstack TypeScript and Rust agent kit: web, backend, mobile (Expo), desktop and mobile (Tauri)."
