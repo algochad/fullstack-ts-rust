@@ -5,9 +5,16 @@ const path = require("path");
 
 const root = path.join(__dirname, "..");
 const win = process.platform === "win32";
-const data =
-  process.env.CLAUDE_PLUGIN_DATA ||
-  path.join(process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), ".claude"), "plugins", "data", "agents-kit");
+// Hooks get CLAUDE_PLUGIN_DATA; the Bash tool (where agents run ctx) does not. Both must land on the same folder, so
+// without the variable derive it from where the plugin is cached: .../plugins/cache/<marketplace>/<name>/<version>.
+function dataDir() {
+  if (process.env.CLAUDE_PLUGIN_DATA) return process.env.CLAUDE_PLUGIN_DATA;
+  const [cache, mkt, name] = root.split(path.sep).slice(-4);
+  const plugins = path.resolve(root, "..", "..", "..", "..");
+  if (cache === "cache" && path.basename(plugins) === "plugins") return path.join(plugins, "data", `${name}-${mkt}`);
+  return path.join(process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), ".claude"), "plugins", "data", "agents-kit");
+}
+const data = dataDir();
 const src = (name) => path.join(data, "src", name);
 const venv = path.join(data, "venv");
 

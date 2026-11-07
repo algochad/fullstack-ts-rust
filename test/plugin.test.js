@@ -106,6 +106,15 @@ test("dispatch does no work in a repo that has not run ctx init, and hints once 
   fs.rmSync(path.join(repo, ".trail", "plugin-managed.json"));
 });
 
+test("data dir is derived from the cache path when CLAUDE_PLUGIN_DATA is missing (Bash tool case)", () => {
+  const at = path.join(tmp, "plugins", "cache", "mk", "nm", "1.0.0");
+  fs.mkdirSync(path.join(at, "scripts"), { recursive: true });
+  fs.copyFileSync(path.join(root, "scripts", "lib.js"), path.join(at, "scripts", "lib.js"));
+  const { CLAUDE_PLUGIN_DATA, ...clean } = process.env;
+  const r = spawnSync(process.execPath, ["-e", `console.log(require(${JSON.stringify(path.join(at, "scripts", "lib.js"))}).data)`], { env: clean, encoding: "utf8" });
+  assert.strictEqual(r.stdout.trim(), path.join(tmp, "plugins", "data", "nm-mk"));
+});
+
 test("every hook script exists and tools.json pins full commits", () => {
   const h = JSON.parse(fs.readFileSync(path.join(root, "hooks", "hooks.json"), "utf8")).hooks;
   for (const g of Object.values(h).flat()) for (const x of g.hooks) {
