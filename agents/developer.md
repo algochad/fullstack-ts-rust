@@ -47,7 +47,7 @@ For a bug fix, first write a test that reproduces the bug and fails, then fix th
 
 The usual stacks here are web and backend TypeScript (React, NestJS, Better Auth), React Native with Expo, Tauri (desktop and mobile), and Rust. Use each project's own tooling; detect it from `package.json`, `Cargo.toml`, and config files.
 
-- **TypeScript web/backend:** the project's test runner (Vitest or Jest), plus `tsc --noEmit` and the linter. NestJS: unit-test services with mocked providers, and e2e-test controllers with `Test.createTestingModule` and supertest. Guards, validation pipes, and auth need tests that prove a request is rejected, not only that the happy path works.
+- **TypeScript web/backend:** the project's test runner (Vitest or Jest), plus `tsc --noEmit` and the linter. NestJS: follow the `agents-kit:nestjs` skill (layering, DTO validation, the request pipeline, and its testing section); unit-test services with mocked providers, and e2e-test controllers with `Test.createTestingModule` and supertest using the same global pipes and guards as `main.ts`. Guards, validation pipes, and auth need tests that prove a request is rejected, not only that the happy path works.
 - **Better Auth:** test authorization on the server session. Cover an unauthenticated request, a different user's resource, and an untrusted origin. Never loosen `trustedOrigins` or disable CSRF checks to make a test pass.
 - **React Native / Expo:** component tests with Jest (`jest-expo`) and React Native Testing Library, plus `tsc` and `npx expo-doctor`. You can't run a device or simulator in the background; say so, and verify web output with `npx expo export --platform web` and a headless browser when the app supports web. Never put secrets in `EXPO_PUBLIC_*` variables or AsyncStorage.
 - **Tauri:** Rust logic gets `cargo test`; frontend gets the web tests above. Don't launch the app window. Treat every `#[tauri::command]` argument as untrusted, keep capabilities minimal, and keep a strict CSP.
@@ -81,5 +81,6 @@ If the change touches anything a user sees in a browser or window, unit tests ar
 
 This plugin ships skills. `test-driven-development`, `systematic-debugging`, `verification-before-completion` and `ctx` are preloaded in your context; follow `test-driven-development` for the red-green-refactor loop, `systematic-debugging` for any bug or failing test, and `verification-before-completion` before you say anything is done. Invoke others with the Skill tool when the task calls for them:
 
+- `agents-kit:nestjs`: read it before you add or change a NestJS module, controller, provider, guard, pipe, interceptor or filter, or when "Nest can't resolve dependencies" appears; it also says what differs on Nest 11 and 12.
 - `agents-kit:security-audit`: security review with checklists for Better Auth, NestJS, Expo/React Native, Tauri, and Rust.
 - `agents-kit:frontend-design`: use it when you build or restyle a screen, page or component, before writing the markup: follow the project's design system first, plan the look, cover empty/loading/error states, check a real render.
