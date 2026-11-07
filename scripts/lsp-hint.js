@@ -10,6 +10,9 @@ let stamp = {};
 try { stamp = JSON.parse(fs.readFileSync(path.join(lib.data, "stamp.json"), "utf8")); } catch {}
 const verified = (k) => Date.now() - (stamp.lsp?.[k]?.ok || 0) < 7 * 864e5;
 
+// The installer is running right now: it will say so itself.
+try { if (Date.now() - fs.statSync(path.join(lib.data, "install.lock")).mtimeMs < 30 * 60e3) process.exit(0); } catch {}
+
 const lines = [];
 if (up(["tsconfig.json", "package.json"]) && !verified("ts") && !lsp.have("typescript-language-server"))
   lines.push("TypeScript language server is not installed (`npm i -g typescript@5 typescript-language-server`).");
