@@ -199,6 +199,28 @@ test("every markdown file is well-formed: valid frontmatter, balanced fences, no
   }
 });
 
+test("lsp: finds what works, plans an install for what does not, and does not retry a fresh failure", () => {
+  const bin = path.join(tmp, "lspbin");
+  fs.mkdirSync(bin, { recursive: true });
+  const stub = (n, code = 0) => { fs.writeFileSync(path.join(bin, n), `#!/bin/sh\nexit ${code}\n`); fs.chmodSync(path.join(bin, n), 0o755); };
+  stub("npm"); stub("rustup");
+  const run = (stamp, extraEnv = {}) => {
+    const r = spawnSync(process.execPath, ["-e", `const l=require(${JSON.stringify(path.join(root, "scripts", "lsp.js"))});const s=${JSON.stringify(stamp)};console.log(JSON.stringify({todo:l.missing(s),stamp:s.lsp}))`], { env: { PATH: bin, ...extraEnv }, encoding: "utf8" });
+    return JSON.parse(r.stdout);
+  };
+  assert.deepStrictEqual(run({}).todo, ["ts", "rust"], "both missing and installable");
+  stub("rust-analyzer", 1); // the rustup proxy case: present on PATH but fails
+  assert.deepStrictEqual(run({}).todo, ["ts", "rust"], "a server that exits non-zero counts as missing");
+  stub("rust-analyzer"); stub("typescript-language-server");
+  const ok = run({});
+  assert.deepStrictEqual(ok.todo, []);
+  assert.ok(ok.stamp.ts.ok && ok.stamp.rust.ok, "working servers are recorded so later sessions spawn nothing");
+  fs.rmSync(path.join(bin, "typescript-language-server"));
+  assert.deepStrictEqual(run({ lsp: { ts: { failed: Date.now() } } }).todo, [], "a failure under a week old is not retried");
+  assert.deepStrictEqual(run({}, { AGENTS_KIT_NO_LSP_INSTALL: "1" }).todo, [], "opt-out");
+  assert.match(require("../scripts/lsp.js").TS.typescript, /^5\./, "TypeScript 7 returns empty LSP results through this server");
+});
+
 test("every hook script exists and tools.json pins full commits", () => {
   const h = JSON.parse(fs.readFileSync(path.join(root, "hooks", "hooks.json"), "utf8")).hooks;
   for (const g of Object.values(h).flat()) for (const x of g.hooks) {

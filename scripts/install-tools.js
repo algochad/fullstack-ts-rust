@@ -4,6 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const { spawn, spawnSync } = require("child_process");
 const lib = require("./lib");
+const lsp = require("./lsp");
 
 const tools = require("../tools.json");
 const stampFile = path.join(lib.data, "stamp.json");
@@ -17,18 +18,23 @@ const upToDate = () => {
 };
 const overridden = () => process.env.AGENTS_KIT_TRAIL_BIN && process.env.AGENTS_KIT_GRAPHIFY_BIN;
 
+const toolsOk = () => overridden() || upToDate();
 function main() {
-  if (overridden() || upToDate() || process.env.AGENTS_KIT_NO_INSTALL) return;
+  if (process.env.AGENTS_KIT_NO_INSTALL) return;
   fs.mkdirSync(lib.data, { recursive: true });
+  const stamp = read(stampFile), todo = lsp.missing(stamp);
+  fs.writeFileSync(stampFile, JSON.stringify(stamp)); // missing() records servers it found working
+  if (toolsOk() && !todo.length) return;
+  const what = toolsOk() ? "the language servers (" + todo.join(", ") + ")" : "the ctx tools (trail, graphify) and language servers";
   // A lock younger than 30 minutes means a worker is already on it.
-  try { if (Date.now() - fs.statSync(lockFile).mtimeMs < 30 * 60e3) return notice(); } catch {}
+  try { if (Date.now() - fs.statSync(lockFile).mtimeMs < 30 * 60e3) return notice(what); } catch {}
   fs.writeFileSync(lockFile, String(process.pid));
   const out = fs.openSync(logFile, "a");
   spawn(process.execPath, [__filename, "--worker"], { detached: true, stdio: ["ignore", out, out], windowsHide: true }).unref();
-  notice();
+  notice(what);
 }
-function notice() {
-  console.log("agents-kit: the ctx tools (trail, graphify) are installing in the background, so `ctx` is unavailable until " + logFile + " says done.");
+function notice(what) {
+  console.log("agents-kit: " + what + " are installing in the background; the log is " + logFile + " (it ends with done).");
 }
 
 function sh(cmd, args, opts) {
@@ -45,22 +51,28 @@ function checkout(name) {
 }
 function worker() {
   console.log("== install " + new Date().toISOString());
-  const stamp = read(stampFile);
+  const stamp = read(stampFile), needTools = !toolsOk();
   try {
-    if (stamp.trail !== tools.trail.commit || !lib.ready(lib.trailEntry())) {
+    if (needTools && (stamp.trail !== tools.trail.commit || !lib.ready(lib.trailEntry()))) {
       const dir = checkout("trail");
       sh("npm", ["ci", "--ignore-scripts", "--no-audit", "--no-fund"], { cwd: dir });
       sh("npm", ["run", "build"], { cwd: dir });
       stamp.trail = tools.trail.commit;
       fs.writeFileSync(stampFile, JSON.stringify(stamp));
     }
-    if (stamp.graphify !== tools.graphify.commit || !lib.ready(lib.graphifyBin())) {
+    if (needTools && (stamp.graphify !== tools.graphify.commit || !lib.ready(lib.graphifyBin()))) {
       const dir = checkout("graphify");
       const py = process.env.AGENTS_KIT_PYTHON || (lib.win ? "python" : "python3");
       if (!lib.ready(lib.graphifyBin())) sh(py, ["-m", "venv", lib.venv]);
       const pip = path.join(lib.venv, lib.win ? "Scripts" : "bin", lib.win ? "python.exe" : "python");
       sh(pip, ["-m", "pip", "install", "--quiet", "--disable-pip-version-check", dir + "[leiden,watch]"]);
       stamp.graphify = tools.graphify.commit;
+      fs.writeFileSync(stampFile, JSON.stringify(stamp));
+    }
+    for (const k of lsp.missing(stamp)) {
+      // The language servers are best effort: a failure here never fails the tools above.
+      try { k === "ts" ? lsp.installTypescript(sh) : lsp.installRust(sh); console.log("lsp " + k + ": installed"); stamp.lsp[k] = { ok: Date.now() }; }
+      catch (e) { console.log("lsp " + k + ": " + e.message); stamp.lsp[k] = { failed: Date.now() }; }
       fs.writeFileSync(stampFile, JSON.stringify(stamp));
     }
     console.log("done");
