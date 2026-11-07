@@ -69,6 +69,7 @@ ctx status
 - No telemetry, update checks, cloud workspace, or model calls. The Graphify model passes are off (`GRAPHIFY_BACKEND=none`) unless you set `AGENTS_KIT_ALLOW_LLM=1`.
 - Reading your past Claude sessions or PRs to propose learnings is opt-in (`trail init --mine-sessions` / `--mine-prs`) and never run by the plugin.
 - Opt-in per repo: the hooks do nothing, and write nothing, in a repo until `ctx init` has run there (it creates `.trail/plugin-managed.json`). Elsewhere you get one hint line at session start.
+- **Agents can't skip it.** In a repo set up with `ctx init`, every session and subagent is told the rule at start; a `PreToolUse` hook refuses `grep`, `find`, `ls`, `Grep` and `Glob` until that agent has tried `ctx` once (at most two refusals, so a broken ctx can never block work); and after the session edits files, the `Stop` hook asks once for `ctx impact`. `AGENTS_KIT_NO_GATE=1` turns all three off.
 - Neither tool writes hooks, a statusline, MCP servers, or skills into `~/.claude`. The plugin registers one hook per Trail event (`scripts/dispatch.js`) and ships the skills. Graphify has no hook; it is asked on demand.
 - Fixes Trail's parsing under a user git config with `diff.mnemonicPrefix`, `colorMoved` and similar.
 

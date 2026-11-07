@@ -115,6 +115,31 @@ test("data dir is derived from the cache path when CLAUDE_PLUGIN_DATA is missing
   assert.strictEqual(r.stdout.trim(), path.join(tmp, "plugins", "data", "nm-mk"));
 });
 
+test("gate: denies a code search until ctx is tried, then opens; subagents are separate; stop asks for impact once", () => {
+  const stubTrail = path.join(tmp, "stub-trail.js");
+  fs.writeFileSync(stubTrail, "");
+  const e = { ...env, AGENTS_KIT_TRAIL_BIN: stubTrail, CLAUDE_PLUGIN_DATA: path.join(tmp, "data") };
+  fs.writeFileSync(path.join(repo, ".trail", "plugin-managed.json"), "{}");
+  const hook = (event, p) => { const r = spawnSync(process.execPath, [path.join(root, "scripts", "gate.js"), event], { env: e, input: JSON.stringify({ cwd: repo, session_id: "s1", ...p }), encoding: "utf8" }); return r.stdout ? JSON.parse(r.stdout) : null; };
+  const bash = (command, extra) => hook("gate", { tool_name: "Bash", tool_input: { command }, ...extra });
+  const denied = (o) => o?.hookSpecificOutput?.permissionDecision === "deny";
+  assert.ok(denied(bash("ls forge")), "ls is a code search");
+  assert.ok(denied(hook("gate", { tool_name: "Grep", tool_input: { pattern: "x" } })));
+  assert.strictEqual(bash("cat src/auth.ts"), null, "reading a named file is fine");
+  assert.strictEqual(bash("cd src && ctx where login"), null);
+  assert.strictEqual(bash("grep -rn login src"), null, "open after one ctx call");
+  assert.ok(denied(bash("grep -rn login src", { agent_id: "sub1" })), "a subagent has its own gate");
+  assert.ok(denied(bash("find . -name x", { agent_id: "sub1" })));
+  assert.strictEqual(bash("find . -name x", { agent_id: "sub1" }), null, "never more than two denials");
+  assert.strictEqual(hook("stop-gate", {}), null, "no edits, no stop request");
+  hook("mark-edit", { tool_name: "Edit" });
+  assert.strictEqual(hook("stop-gate", {}).decision, "block");
+  assert.strictEqual(hook("stop-gate", {}), null, "asked once");
+  assert.match(hook("rule", { hook_event_name: "SubagentStart" }).hookSpecificOutput.additionalContext, /ctx where/);
+  fs.rmSync(path.join(repo, ".trail", "plugin-managed.json"));
+  assert.strictEqual(bash("ls forge", { session_id: "s9" }), null, "inactive without ctx init");
+});
+
 test("every hook script exists and tools.json pins full commits", () => {
   const h = JSON.parse(fs.readFileSync(path.join(root, "hooks", "hooks.json"), "utf8")).hooks;
   for (const g of Object.values(h).flat()) for (const x of g.hooks) {

@@ -24,8 +24,7 @@ try {
   const state = repoState(cwd);
   if (event && state === "init" && lib.ready(lib.trailEntry())) {
     const { cmd, args } = lib.trailCmd(["hook", event]);
-    const r = spawnSync(cmd, args, { input, stdio: ["pipe", "inherit", "inherit"], env: lib.toolEnv() });
-    if (event === "session-start" && r.status === 0) spawnSync(process.execPath, [path.join(__dirname, "ctx.js"), "brief"], { stdio: "inherit", env: lib.toolEnv() });
+    spawnSync(cmd, args, { input, stdio: ["pipe", "inherit", "inherit"], env: lib.toolEnv() });
   } else if (event === "session-start" && state === "git" && lib.ready(lib.trailEntry())) {
     console.log("ctx: this repo is not set up for code graph and team learnings; `/agents-kit:ctx-init` (or `ctx init`) does it locally. Nothing runs here until then.");
   }
