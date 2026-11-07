@@ -1,0 +1,12 @@
+{
+  "trail": {
+    "repo": "https://github.com/algochad/Trail-Code.git",
+    "ref": "local-only",
+    "commit": "f0bf48661b4b8878f550553a83159b016594d7c8"
+  },
+  "graphify": {
+    "repo": "https://github.com/algochad/graphify.git",
+    "ref": "claude-bridge",
+    "commit": "34b00bc509751a9c73a77af774e7a8e7fe5593a0"
+  }
+}

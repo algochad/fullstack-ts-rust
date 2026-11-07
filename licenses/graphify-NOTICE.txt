@@ -1,0 +1,19 @@
+Graphify
+Copyright 2026 Safi Shamsi and the Graphify contributors.
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Portions of this software were contributed under the MIT License prior to the
+relicensing and remain available under those terms. The original MIT license
+text is retained in LICENSE-MIT.
+
+Modified by algochad, 2026-11-07 (fork of Graphify; branch claude-bridge).
+Changes, none of which alter existing default output:
+- `--json` output for `graphify query`, `path` and `explain` (graphify/jsonout.py,
+  docs/json-output.md).
+- `GRAPHIFY_QUERY_LOG=1` selects the default query-log path; README query-log
+  text corrected (logging was already off by default).
+- `graphify claude export --out <dir>` writes the Claude Code skill without
+  touching user configuration.
+- `graphify status [--json]` offline graph-freshness report (graphify/status.py).
+- docs/claude-code-plugin.md describing the above.

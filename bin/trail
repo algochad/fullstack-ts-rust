@@ -1,0 +1,12 @@
+#!/usr/bin/env node
+// Trail (the team-memory half of ctx), local-only fork. Everything else lives in scripts/lib.js.
+const { spawnSync } = require("child_process");
+const lib = require("../scripts/lib");
+
+const { cmd, args } = lib.trailCmd(process.argv.slice(2));
+if (!lib.ready(lib.trailEntry())) {
+  console.error("trail is not installed yet: the agents-kit installer runs at session start (log: " + lib.data + "/install.log)");
+  process.exit(1);
+}
+const r = spawnSync(cmd, args, { stdio: "inherit", env: lib.toolEnv({ TRAIL_INVOKED_AS: "trail" }) });
+process.exit(r.status ?? 1);

@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+// Graphify (the code-graph half of ctx), fork with --json. Never calls a model unless AGENTS_KIT_ALLOW_LLM is set.
+const { spawnSync } = require("child_process");
+const lib = require("../scripts/lib");
+
+if (!lib.ready(lib.graphifyBin())) {
+  console.error("graphify is not installed yet: the agents-kit installer runs at session start (log: " + lib.data + "/install.log)");
+  process.exit(1);
+}
+const r = spawnSync(lib.graphifyBin(), process.argv.slice(2), { stdio: "inherit", env: lib.toolEnv() });
+process.exit(r.status ?? 1);
