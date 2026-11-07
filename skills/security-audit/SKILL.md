@@ -33,7 +33,7 @@ Detect the stack from the repo (`package.json`, `Cargo.toml`, `tauri.conf.json`,
 | Tauri (`src-tauri/`, `@tauri-apps/*`) | [references/stacks/tauri.md](references/stacks/tauri.md) |
 | Rust (`Cargo.toml`, `.rs`) | [references/stacks/rust.md](references/stacks/rust.md) |
 
-Stacks combine: a Nest API with Better Auth and an Expo client needs three of them. Plain web frontends (React, Next.js) use the generic categories below: XSS sinks, token storage, CORS and CSRF, server actions, and environment variables exposed to the client (`NEXT_PUBLIC_*`, `VITE_*`).
+Stacks combine: a Nest API with Better Auth and an Expo client needs three of them. Plain web frontends (React, Next.js) use the generic categories below (the `agents-kit:react` skill covers how to build them; its review checklist covers non-security review): XSS sinks, token storage, CORS and CSRF, server actions, and environment variables exposed to the client (`NEXT_PUBLIC_*`, `VITE_*`).
 
 ## 4. Hunt: trace data from source to sink
 

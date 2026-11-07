@@ -1,5 +1,7 @@
 # Rust
 
+This is the security checklist. For Rust practice (ownership, errors, async, testing, tooling), use the `agents-kit:rust` skill; its review checklist covers non-security review.
+
 Audit checklist for Rust code (Tauri cores, backends, native modules). Memory-safe Rust removes whole bug classes, so don't report buffer overflows or use-after-free in safe code. Look at what the compiler doesn't check.
 
 ## `unsafe` and FFI

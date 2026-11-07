@@ -6,7 +6,9 @@ const path = require("path");
 const { spawnSync } = require("child_process");
 const lib = require("./lib");
 
-// Pinned. TypeScript 7 (the native port) answers LSP requests with empty results through this server, so stay on 5.x.
+// Pinned. A server whose own `typescript` is 7 (the native port, which ships no tsserver) answers LSP requests with empty
+// results, so the server is installed with 5.x. A project that has TypeScript 7 in its workspace is fine: the server
+// falls back to its own 5.9. The server needs Node 22.22.2+.
 const TS = { "typescript-language-server": "6.0.2", typescript: "5.9.3" };
 
 // "Exists on PATH" is not enough: rustup leaves a rust-analyzer proxy behind that fails when the component is missing.
@@ -21,7 +23,10 @@ function linkDir() {
   try { fs.mkdirSync(dir, { recursive: true }); fs.accessSync(dir, fs.constants.W_OK); return dir; } catch { return null; }
 }
 
+const nodeAtLeast = (want, have = process.versions.node) => { const a = have.split(".").map(Number), w = want.split(".").map(Number); for (let i = 0; i < 3; i++) { if (a[i] > w[i]) return true; if (a[i] < w[i]) return false; } return true; };
+
 function installTypescript(sh) {
+  if (!nodeAtLeast("22.22.2")) throw new Error("typescript-language-server 6.0.2 needs Node 22.22.2 or newer (this is " + process.versions.node + ")");
   const prefix = path.join(lib.data, "lsp");
   fs.mkdirSync(prefix, { recursive: true });
   sh("npm", ["install", "--prefix", prefix, "--no-audit", "--no-fund", "--ignore-scripts", ...Object.entries(TS).map(([n, v]) => `${n}@${v}`)]);
@@ -51,4 +56,4 @@ function missing(stamp) {
   return out;
 }
 
-module.exports = { TS, works, have, missing, installTypescript, installRust, linkDir };
+module.exports = { nodeAtLeast, TS, works, have, missing, installTypescript, installRust, linkDir };

@@ -218,6 +218,9 @@ test("lsp: finds what works, plans an install for what does not, and does not re
   fs.rmSync(path.join(bin, "typescript-language-server"));
   assert.deepStrictEqual(run({ lsp: { ts: { failed: Date.now() } } }).todo, [], "a failure under a week old is not retried");
   assert.deepStrictEqual(run({}, { AGENTS_KIT_NO_LSP_INSTALL: "1" }).todo, [], "opt-out");
+  const { nodeAtLeast } = require("../scripts/lsp.js");
+  assert.ok(nodeAtLeast("22.22.2", "22.22.2") && nodeAtLeast("22.22.2", "24.0.0") && nodeAtLeast("22.22.2", "22.23.0"));
+  assert.ok(!nodeAtLeast("22.22.2", "22.22.1") && !nodeAtLeast("22.22.2", "20.19.0") && !nodeAtLeast("22.22.2", "22.21.9"), "older Node must not get a server it cannot run");
   assert.match(require("../scripts/lsp.js").TS.typescript, /^5\./, "TypeScript 7 returns empty LSP results through this server");
 });
 

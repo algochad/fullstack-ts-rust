@@ -21,7 +21,7 @@ Express 4, wildcard routes written `*`, `forRoutes('*')`, Node 16 or 18 supporte
 
 ## 12
 
-- **Runtime:** Node 20.19+ or 22.12+ (21 unsupported). Generating or upgrading with the CLI needs Node 22.22.3+, 24.15+ or 26+. `@nestjs/schematics` 12 needs TypeScript 6. Older `ts-jest` or `typescript-eslint` pins can block install: `npm update ts-jest typescript-eslint`.
+- **Runtime:** Node 20.19+ or 22.12+ (21 unsupported). Generating or upgrading with the CLI needs Node 22.22.3+, 24.15+ or 26+. `@nestjs/schematics` 12 needs TypeScript 6 (moving to TypeScript 7 is a separate tooling decision; see `agents-kit:typescript`). Older `ts-jest` or `typescript-eslint` pins can block install: `npm update ts-jest typescript-eslint`.
 - **All core packages ship as ESM.** CommonJS apps keep working through `require(esm)`. `nest new` asks for CommonJS or ESM; ESM defaults to Vitest, CommonJS to Jest, new projects use oxlint. **Jest loads ESM-only v12 packages only on Node 24.9+**; older Node fails with `ERR_REQUIRE_ASYNC_MODULE`. AWS Lambda CommonJS apps need `NODE_OPTIONS=--experimental-require-module`.
 - **Going ESM yourself** (optional): `"type": "module"`, `nodenext` module resolution, `.js` extensions on relative imports, `import.meta.dirname` instead of `__dirname`, `createRequire` instead of `require`. Fix all imports in one pass.
 - **Validation:** `ValidationPipe` and `ClassSerializerInterceptor` remain. New: Standard Schema support (Zod, Valibot, ArkType) through a `schema` option on `@Body()`, `@Query()`, `@Param()`, `@RawBody()`, plus `StandardSchemaValidationPipe` and `StandardSchemaSerializerInterceptor`; `ValidationPipe` option `errorFormat: 'list' | 'grouped'`.

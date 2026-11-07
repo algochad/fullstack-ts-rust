@@ -1,5 +1,7 @@
 # Tauri (v2, desktop and mobile)
 
+This is the security checklist. For how to build, test and debug Tauri apps, use the `agents-kit:tauri` skill; its review checklist covers non-security review.
+
 Audit checklist from the Tauri v2 security docs (capabilities, permissions, scopes, CSP). Trust model: Rust core and plugins have full system access; the WebView frontend is constrained to what the IPC layer exposes. The IPC boundary is where most findings live.
 
 ## Capabilities and permissions (`src-tauri/capabilities/*.json|toml`)
