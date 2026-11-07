@@ -2,7 +2,7 @@
   "trail": {
     "repo": "https://github.com/algochad/Trail-Code.git",
     "ref": "local-only",
-    "commit": "6563b2e1fd326eb526412e12177ee92d219af3e3"
+    "commit": "44259c78859f6f09be3059405a0f5e38bce65402"
   },
   "graphify": {
     "repo": "https://github.com/algochad/graphify.git",
