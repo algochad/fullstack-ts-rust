@@ -103,6 +103,8 @@ If you already installed any of these from another marketplace, uninstall that c
 
 Restart Claude Code afterwards. To try it from a local checkout: `claude --plugin-dir /path/to/fullstack-ts-rust`.
 
+**Updating from before 3.3.0:** `claude plugin update` does not install dependencies that a new version adds, and the plugin then fails to load with "Dependency ... is not installed". Run `claude plugin install agents-kit@fullstack-ts-rust` once (it installs `typescript-lsp`), then `claude plugin install rust-analyzer-lsp@fullstack-ts-rust` if it is still reported missing.
+
 ## Requirements
 
 - **Node** on `PATH` for the hooks (see Notes). For `ctx`: also `git` and Python 3.10+, and network on the first session for the clone and `pip`.
