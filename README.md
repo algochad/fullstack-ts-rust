@@ -68,6 +68,7 @@ ctx status
 **What the forks change, and what they never do**
 - No telemetry, update checks, cloud workspace, or model calls. The Graphify model passes are off (`GRAPHIFY_BACKEND=none`) unless you set `AGENTS_KIT_ALLOW_LLM=1`.
 - Reading your past Claude sessions or PRs to propose learnings is opt-in (`trail init --mine-sessions` / `--mine-prs`) and never run by the plugin.
+- Opt-in per repo: the hooks do nothing, and write nothing, in a repo until `ctx init` has run there (it creates `.trail/plugin-managed.json`). Elsewhere you get one hint line at session start.
 - Neither tool writes hooks, a statusline, MCP servers, or skills into `~/.claude`. The plugin registers one hook per Trail event (`scripts/dispatch.js`) and ships the skills. Graphify has no hook; it is asked on demand.
 - Fixes Trail's parsing under a user git config with `diff.mnemonicPrefix`, `colorMoved` and similar.
 

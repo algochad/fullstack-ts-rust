@@ -94,6 +94,18 @@ test("dispatch never fails or prints when trail is not installed", () => {
   assert.strictEqual(r.stdout, "");
 });
 
+test("dispatch does no work in a repo that has not run ctx init, and hints once at session start", () => {
+  const fakeTrail = path.join(tmp, "fake-trail.js");
+  fs.writeFileSync(fakeTrail, 'console.log("RAN " + process.argv.slice(2).join(" "))');
+  const e = { ...env, AGENTS_KIT_TRAIL_BIN: fakeTrail };
+  const run = (event) => spawnSync(process.execPath, [path.join(root, "scripts", "dispatch.js"), event], { env: e, input: JSON.stringify({ cwd: repo }), encoding: "utf8" });
+  assert.strictEqual(run("prompt").stdout, "");
+  assert.match(run("session-start").stdout, /not set up/);
+  fs.writeFileSync(path.join(repo, ".trail", "plugin-managed.json"), "{}");
+  assert.match(run("prompt").stdout, /RAN hook prompt/);
+  fs.rmSync(path.join(repo, ".trail", "plugin-managed.json"));
+});
+
 test("every hook script exists and tools.json pins full commits", () => {
   const h = JSON.parse(fs.readFileSync(path.join(root, "hooks", "hooks.json"), "utf8")).hooks;
   for (const g of Object.values(h).flat()) for (const x of g.hooks) {
