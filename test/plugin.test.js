@@ -126,6 +126,8 @@ test("gate: denies a code search until ctx is tried, then opens; subagents are s
   assert.ok(denied(bash("ls forge")), "ls is a code search");
   assert.ok(denied(hook("gate", { tool_name: "Grep", tool_input: { pattern: "x" } })));
   assert.strictEqual(bash("cat src/auth.ts"), null, "reading a named file is fine");
+  assert.strictEqual(bash("trail ask login", { session_id: "s2" }), null);
+  assert.ok(denied(bash("ls forge", { session_id: "s2" })), "trail ask alone does not open the gate");
   assert.strictEqual(bash("cd src && ctx where login"), null);
   assert.strictEqual(bash("grep -rn login src"), null, "open after one ctx call");
   assert.ok(denied(bash("grep -rn login src", { agent_id: "sub1" })), "a subagent has its own gate");

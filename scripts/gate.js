@@ -38,7 +38,7 @@ function prune(dir) {
   try { for (const f of fs.readdirSync(dir)) { const p = path.join(dir, f); if (Date.now() - fs.statSync(p).mtimeMs > 864e5) fs.unlinkSync(p); } } catch {}
 }
 
-const CTX = /(^|&&|;|\|\|?|\()\s*(ctx|trail|graphify)(\s|$)/;
+const CTX = /(^|&&|;|\|\|?|\()\s*ctx(\s|$)/; // only ctx opens the gate: it is the join of the two tools
 const IMPACT = /(^|&&|;|\|\|?|\()\s*ctx\s+impact(\s|$)/;
 const SEARCH = /(^|&&|;|\|\|?|\()\s*(cd\s+[^;&|]+(&&|;)\s*)?(git\s+grep|grep|egrep|fgrep|rg|find|ls|tree|fd|ag|ack)(\s|$)/;
 
